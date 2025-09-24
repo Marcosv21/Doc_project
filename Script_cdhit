@@ -1,0 +1,23 @@
+
+INPUT="/temporario2/9290665/mucin_proteins_db/faa_files/GH98.fasta" 
+
+cd-hit -i $INPUT -o nr_GH98.fasta -c 1.00 #the parameter 1.00 clusterize only sequences that are identical 
+
+#arquivos .out estão em ~/mucin_proteins_db/nr_faa_files/out
+
+#after removal of redundancy, files were edited to contain the name of the family at the identification line, using the following:
+#!/bin/bash
+
+# Loop through the target files
+for file in nr_GH*.fasta; do
+    # Extract the CAZy family from the filename (e.g., GH101)
+    family=$(echo "$file" | grep -o 'GH[0-9]\+')
+
+    # Modify the identifiers and save to a new file
+    sed "s/^>\([^ ]*\)/>$family.\1/" "$file" > "mod_$file"
+
+    echo "Processed: $file -> mod_$file"
+done
+
+#Also, files were concatenaded. This allowed to make only one database for comparison with diamond. 
+cat *.fasta > all_sequences.fasta
