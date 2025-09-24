@@ -1,0 +1,27 @@
+#!/bin/bash
+# Dependencies: Samtools
+# Install:
+#   conda install -c bioconda samtools
+
+# Script to extract only the unaligned sequences with the human genome and convert them back to FASTQ, separating forward and reverse
+# Directories and variables
+INPUT_DIR="/temporario2/9290665/DADOS_ALZHEIMER/laske/outputs_bowtie2"
+OUTPUT_DIR="/temporario2/9290665/DADOS_ALZHEIMER/laske/cleaned_reads"
+mkdir -p "$OUTPUT_DIR"
+
+# Processing
+for SAM_FILE in "$INPUT_DIR"/*.sam; do
+  BASENAME=$(basename "$SAM_FILE" .sam)
+  
+  # Convert and filter SAM -> BAM
+  samtools view -@ 8 -b -f 12 -F 256 "$SAM_FILE" > "$OUTPUT_DIR/${BASENAME}_filtered.bam" 
+  # @8 uses 8 threads, -f 12 ensures that only reads where neither the primary read (flag 4) nor the pair (flag 8) are aligned are kept
+  # -F 256 excludes secondary alignments, which are usually not useful for basic analysis.
+  # Filtering options: -f (require flags): have all of the flags present, -F exclude flags: have none of the flags present
+
+  # Convert BAM to FASTQ
+  samtools fastq -@ 8 -1 "$OUTPUT_DIR/${BASENAME}_R1.fastq" -2 "$OUTPUT_DIR/${BASENAME}_R2.fastq" "$OUTPUT_DIR/${BASENAME}_filtered.bam"
+  
+  # Remove intermediate file (optional)
+  rm "$OUTPUT_DIR/${BASENAME}_filtered.bam"
+done
