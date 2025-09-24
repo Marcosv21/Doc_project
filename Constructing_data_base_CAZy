@@ -1,0 +1,20 @@
+#Data about the query proteins was first obtained from CAZy, then filtered at an excell sheet for only Bacteria and proteins sequences available at ncbi. After that, accessions lists were saved
+#and then upload at the ncbi Batch Entrez for filtering of hypothetical proteins (customized filter). Batch Entrez would only provide a list of the hypothetical proteins, which were then removed
+#from the original list through a simple python code:
+#import pandas as pd
+
+# Carregar a lista original
+df_original = pd.read_csv("accession_list_GH2.txt", header=None, names=["accession"])
+
+# Carregar a lista de acessos a serem removidos
+df_remove = pd.read_csv("accessions_to_remove_GH2.txt", header=None, names=["accession"])
+
+# Remover os accession numbers da lista original
+df_filtered = df_original[~df_original["accession"].isin(df_remove["accession"])]
+
+# Salvar a nova lista filtrada
+df_filtered.to_csv("accession_list_GH2_filtered.txt", index=False, header=False)
+
+print(df_original.shape,"-",df_remove.shape, "→", df_filtered.shape)  # Mostrar quantos foram removidos
+
+#This list was subjected to CDHit (script available) for removal of redundancy 
