@@ -1,0 +1,18 @@
+#!/bin/bash
+# Dependencies: Diamond
+# Install:
+# conda install bioconda::diamond
+
+# Define working directory
+dir="/temporario2/9290665/DADOS_ALZHEIMER/laske/prodigal_outputs"
+
+db="/temporario2/9290665/DADOS_ALZHEIMER/laske/all_sequences.dmnd"  # DIAMOND database
+
+# Loop to process all .faa files in the directory
+for query in $dir/*.faa; do
+    output=${query%.faa}_matches.tsv  # Output file name
+    echo "Running DIAMOND for $query..."
+    diamond blastp -d "$db" -q "$query" -o "$output" --outfmt 6 qseqid sseqid pident length qlen slen mismatch gapopen evalue bitscore
+done
+
+echo "Finished!"
