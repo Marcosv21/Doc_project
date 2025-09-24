@@ -6,8 +6,8 @@
 ACCESSION_FILE="/temporario2/9290665/DADOS/wallen/ACCESSION_FILE_WALLEN" #O caminho que está o acession file
 
 # Destination directories
-SRA_DIR="/temporario2/9290665/DADOS_PARKINSON/wallen/sra_files"
-FASTQ_DIR="/temporario2/9290665/DADOS_PARKINSON/wallen/fastq_files"
+SRA_DIR="/temporario2/9290665/DADOS/wallen/sra_files"
+FASTQ_DIR="/temporario2/9290665/DADOS/wallen/fastq_files"
 
 # Create directories if they do not exist
 mkdir -p $SRA_DIR
