@@ -65,3 +65,4 @@ for FILE1 in $FASTQ_PATH/*_1.fastq.gz; do
 done
 
 # NOTE: Bowtie2 generates a single output file containing the alignment of both sequences (forward and reverse).
+#Caso de erro: "exit value 139", remova "rm GRCh38_index.*.bt2" os indices construidos, e force o programa a montar outros
