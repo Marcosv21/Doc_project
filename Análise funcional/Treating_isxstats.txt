@@ -1,0 +1,20 @@
+#Step 1: adding a header 
+arquivos= sorted(glob.glob ("/home/gabrielacastilho/idxstats/*.idxstats.txt")
+
+colunas = ["CDS", "lenght", "mapped_reads", "unmapped_reads"]
+
+for arquivo in arquivos:
+    # Lê o arquivo sem cabeçalho e atribui os nomes das colunas
+    df = pd.read_csv(arquivo, sep="\t", names=colunas, header=None)
+    
+    # Salva com cabeçalho incluso (pode sobrescrever ou salvar como novo)
+    df.to_csv(arquivo, sep="\t", index=False)
+
+#Step 2: Applying RPKM for normalization
+
+for arquivo in arquivos:
+    df= pd.read_csv(arquivo, sep='\t')
+    total_mapped = df["mapped_reads"].sum()
+    df['Abundância']= (df["mapped_reads"] * 10**9) / (df["length"] * total_mapped)
+    df.to_csv(arquivo, sep='\t', index=False)
+#from now on, you have the normalized abundancy for every CDS in that sample

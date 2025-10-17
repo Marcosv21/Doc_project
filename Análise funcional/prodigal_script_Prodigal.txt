@@ -1,0 +1,26 @@
+#!/bin/bash
+# Dependencies: Prodigal
+# Install:
+# conda install bioconda::prodigal
+
+#path to folders
+MEGAHIT_DIR=~/DADOS_ALZHEIMER/laske/megahit_outputs_2
+OUTPUT_DIR=~/DADOS_ALZHEIMER/laske/prodigal_outputs
+
+mkdir -p $OUTPUT_DIR
+
+# Loop through samples
+for CONTIGS_PATH in $MEGAHIT_DIR/ERR*; do
+    SAMPLE=$(basename "$CONTIGS_PATH")
+    CONTIGS_FILE="$CONTIGS_PATH/${SAMPLE}.final.contigs.fa"
+
+    echo "Running Prodigal for $SAMPLE"
+
+    prodigal -i $CONTIGS_FILE \
+             -o $OUTPUT_DIR/${SAMPLE}.gff \  #GFF file containing the coordinates of the predicted genes.
+             -a $OUTPUT_DIR/${SAMPLE}.faa \  #FASTA file with the predicted protein sequences (translated genes)
+             -d $OUTPUT_DIR/${SAMPLE}.fna \  #FASTA file with the nucleotide sequences of the predicted genes.
+             -p meta
+done
+
+echo "Prodigal finished!"

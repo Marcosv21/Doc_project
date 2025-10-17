@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Dependencies and Installation:
+# This script requires:
+# - Conda (for environment management)
+# - Samtools installed in the environment (e.g., via: conda install -c bioconda samtools)
+
+# Activate the Conda environment
+eval "$(conda shell.bash hook)"
+conda activate bowtie2_env
+
+# Define paths
+INPUT_DIR="/temporario2/9290665/DADOS_ALZHEIMER/laske/fna_reads_aligned_1"
+OUTPUT_DIR="/temporario2/9290665/DADOS_ALZHEIMER/laske/idxstats"
+
+# Create output directory if it does not exist
+mkdir -p "$OUTPUT_DIR"
+
+# Loop through only the selected BAM files
+for sorted_bam in "$INPUT_DIR"/*.sorted.bam; do
+    base_name=$(basename "$sorted_bam" .sorted.bam)
+    echo "Processing: $base_name"
+
+    # Index BAM file
+    if samtools index "$sorted_bam"; then
+        echo "Index created successfully for $sorted_bam"
+    else
+        echo "Error indexing $sorted_bam" >&2
+        continue
+    fi
+
+    # Generate idxstats
+    if samtools idxstats "$sorted_bam" > "$OUTPUT_DIR/${base_name}.idxstats.txt"; then
+        echo "Idxstats generated successfully: $OUTPUT_DIR/${base_name}.idxstats.txt"
+    else
+        echo "Error generating idxstats for $sorted_bam" >&2
+    fi
+
+done

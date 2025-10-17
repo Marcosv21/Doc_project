@@ -1,0 +1,88 @@
+import pandas as pd
+import glob
+arquivos= glob.glob ("/home/gabrielacastilho/outputs_diamond/*.tsv")
+colunas = ["qseqid", "sseqid", "pident", "length", "qlen", "slen", "mismatch", "gapopen",
+           "evalue", "bitscore"]
+
+
+for arquivo in arquivos:
+    # Lê o arquivo sem cabeçalho e atribui os nomes das colunas
+    df = pd.read_csv(arquivo, sep="\t", names=colunas, header=None)
+    
+    # Salva com cabeçalho incluso (pode sobrescrever ou salvar como novo)
+    df.to_csv(arquivo, sep="\t", index=False)
+    
+for arquivo in arquivos:
+    # Lê o arquivo e exclui as colunas mismatch e gapopen
+    df = pd.read_csv(arquivo, sep="\t")
+    df2= df.loc[:, ~df.columns.isin(['mismatch', 'gapopen'])]
+    # Salva com cabeçalho incluso (pode sobrescrever ou salvar como novo)
+    df2.to_csv(arquivo, sep="\t", index=False)
+ 
+for arquivo in arquivos:
+    # Lê o arquivo e mantém somente linhas com pident >= 40)
+    df = pd.read_csv(arquivo, sep="\t")
+    dfpident= df[df['pident'] >= 40]
+    # Salva sobrescrevendo
+    dfpident.to_csv(arquivo, sep="\t", index=False)
+    
+for arquivo in arquivos:
+    # Lê o arquivo
+    df = pd.read_csv(arquivo, sep='\t')
+
+    # Aplica o filtro (evalue <= 1e-4)
+    df_filtrado = df[df['evalue'] <= 1e-4]
+
+    # Salva sobrescrevendo o arquivo original
+    df_filtrado.to_csv(arquivo, sep='\t', index=False)
+
+for arquivo in arquivos:
+    # Lê o arquivo
+    df = pd.read_csv(arquivo, sep='\t')
+
+    # Cria a nova coluna 'cobertura' (length / qlen)
+    df['cobertura'] = df['length'] / df['qlen']
+
+    # Salva sobrescrevendo o arquivo original
+    df.to_csv(arquivo, sep='\t', index=False)
+   
+for arquivo in arquivos:
+    # Lê o arquivo
+    df = pd.read_csv(arquivo, sep='\t')
+
+    # Filtra: mantém só onde cobertura é >=0.5
+    df_filtrado = df[df['cobertura'] >= 0.5]
+
+    # Salva sobrescrevendo o arquivo original
+    df_filtrado.to_csv(arquivo, sep='\t', index=False)
+    
+for arquivo in arquivos:
+    # Lê o arquivo
+    df = pd.read_csv(arquivo, sep='\t')
+
+    # Cria a nova coluna 'qlen/slen'
+    df['qlen/slen'] = df['qlen'] / df['slen']
+
+    # Salva sobrescrevendo o arquivo original
+    df.to_csv(arquivo, sep='\t', index=False)
+    
+for arquivo in arquivos:
+    # Lê o arquivo
+    df = pd.read_csv(arquivo, sep='\t')
+
+    # Aplica o filtro (evalue <= 1e-4)
+    df_filtrado = df[(df['qlen/slen'] >= 0.7) & (df['qlen/slen'] <= 1.5)]
+   
+    # Salva sobrescrevendo o arquivo original
+    df_filtrado.to_csv(arquivo, sep='\t', index=False)
+
+for arquivo in arquivos:
+    # Lê o arquivo
+    df = pd.read_csv(arquivo, sep='\t')
+
+    # Aplica o filtro (bitscore>=50)
+    df_filtrado = df[df['bitscore'] >= 50]
+
+    # Salva sobrescrevendo o arquivo original
+    df_filtrado.to_csv(arquivo, sep='\t', index=False)
+    
