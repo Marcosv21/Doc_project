@@ -3,43 +3,9 @@
 # Este script alinha leituras pareadas (FASTQ) contra um índice de referência
 # usando o Bowtie2. Ele irá verificar/criar o ambiente Conda necessário.
 
-# --- Seção 1: Configuração Automática do Ambiente ---
-
-# Inicializa o Conda para o script
-eval "$(conda shell.bash hook)"
-
-# Define o nome do ambiente necessário
-ENV_NAME="Bowtie2" # Você pode mudar este nome se preferir
-
-# Verifica se o ambiente Conda já existe
-if ! conda info --envs | grep -q "^${ENV_NAME}\s"; then
-    echo "Ambiente Conda '${ENV_NAME}' não encontrado."
-    echo "Criando o ambiente e instalando Bowtie2 agora..."
-    
-    # Cria o ambiente e instala o bowtie2 do canal bioconda
-    conda create -n "${ENV_NAME}" -c bioconda bowtie2 -y
-    
-    # Verifica se a criação foi bem-sucedida
-    if [ $? -ne 0 ]; then
-        echo "ERRO: Falha ao criar o ambiente Conda. Verifique sua instalação."
-        exit 1
-    fi
-    echo "Ambiente '${ENV_NAME}' criado e configurado com sucesso."
-else
-    echo "Ambiente Conda '${ENV_NAME}' encontrado."
-fi
-
-# Ativa o ambiente Conda
-echo "Ativando o ambiente '${ENV_NAME}'..."
-conda activate "${ENV_NAME}"
-
-# --- Seção 2: Entrada do Usuário ---
-
-echo ""
-echo "--- Configuração de Caminhos para o Alinhamento com Bowtie2 ---"
-read -p "Insira o caminho para o diretório com os reads limpos (FASTQ): " FASTQ_PATH
-read -p "Insira o caminho para o diretório com os contigs/genomas indexados: " INDEX_PATH
-read -p "Insira o caminho para o diretório de SAÍDA principal: " OUTPUT_PATH_BASE
+FASTQ_PATH = "o caminho para o diretório com os reads limpos (FASTQ): "
+INDEX_PATH = "o caminho para o diretório com os contigs/genomas indexados: "
+OUTPUT_PATH_BASE = "o caminho para o diretório de SAÍDA principal: "
 
 # --- Seção 3: Execução Principal ---
 
