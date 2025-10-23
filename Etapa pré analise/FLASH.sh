@@ -7,10 +7,10 @@
 echo "--- Configuração de Caminhos para o Script FLASH ---"
 
 # Pede ao usuário para inserir o diretório de entrada com os arquivos FASTQ
-read -p "Por favor, insira o caminho completo para o diretório de ENTRADA (com os arquivos .fastq): " FASTQ_PATH
+FASTQ_PATH = caminho completo para o diretório de ENTRADA (com os arquivos .fastq)
 
 # Pede ao usuário para inserir o diretório de SAÍDA principal
-read -p "Agora, insira o caminho para o diretório de SAÍDA principal: " OUTPUT_PATH_BASE
+OUTPUT_PATH_BASE = caminho para o diretório de SAÍDA principal
 # --- Fim da Seção Interativa ---
 
 # Define o nome da pasta de saída de forma automática
