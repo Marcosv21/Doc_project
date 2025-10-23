@@ -1,76 +1,39 @@
 #!/bin/bash
-# Dependencies: Bowtie2, Conda
-# Este script irá verificar/criar o ambiente Conda necessário e, em seguida,
-# indexar os arquivos de contigs montados pelo MEGAHIT usando Bowtie2.
+# Dependencies: Bowtie2
+# Install:
+#   conda install -c bioconda bowtie2
 
-# --- Seção 1: Configuração Automática do Ambiente ---
-
-# Inicializa o Conda para o script
+#Activate the Conda environment (if needed)
 eval "$(conda shell.bash hook)"
+conda activate bowtie2_env
 
-# Define o nome do ambiente necessário (CORREÇÃO 1)
-ENV_NAME="Bowtie2"
+# Directories
+MEGAHIT_DIR="Caminho/megahit_outputs"
+OUTPUT_DIR="Caminho/indexed_contigs"
 
-# Verifica se o ambiente Conda já existe
-if ! conda info --envs | grep -q "^${ENV_NAME}\s"; then
-    echo "Ambiente Conda '${ENV_NAME}' não encontrado."
-    echo "Criando o ambiente e instalando Bowtie2 agora..."
-    conda create -n "${ENV_NAME}" -c bioconda bowtie2 -y
-    if [ $? -ne 0 ]; then
-        echo "ERRO: Falha ao criar o ambiente Conda."
-        exit 1
-    fi
-    echo "Ambiente '${ENV_NAME}' criado e configurado com sucesso."
-else
-    echo "Ambiente Conda '${ENV_NAME}' encontrado."
-fi
-
-# Ativa o ambiente Conda (CORREÇÃO 1)
-echo "Ativando o ambiente '${ENV_NAME}'..."
-conda activate "${ENV_NAME}"
-
-# --- Seção 2: Execução Principal do Script ---
-
-# Define os diretórios de trabalho
-MEGAHIT_DIR="/home/marcos/Teste/MEGAHITS/Megahit_assemblies"
-OUTPUT_DIR="/home/marcos/Teste/binning"
-
-echo ""
-echo "------------------------------------------------"
-echo "Diretório de entrada das montagens: $MEGAHIT_DIR"
-echo "Os arquivos de índice serão salvos em: $OUTPUT_DIR"
-echo "------------------------------------------------"
-
+# Create the output directory if it doesn't exist
 mkdir -p "$OUTPUT_DIR"
-SAMPLES_FOUND=0
 
-# Loop para procurar por todos os prefixos (SRR, ERR, DRR)
-for CONTIGS_PATH in "$MEGAHIT_DIR"/{SRR,ERR,DRR}*; do
-    if [ ! -d "$CONTIGS_PATH" ]; then
-        continue
-    fi
-    SAMPLES_FOUND=1
+# Loop through the samples
+for CONTIGS_PATH in "$MEGAHIT_DIR"/ERR*; do
+    # Get the sample name from the folder name
     SAMPLE=$(basename "$CONTIGS_PATH")
+    CONTIGS_FILE="$CONTIGS_PATH/${SAMPLE}.final.contigs.fa"
 
-    # Define o caminho correto para o arquivo de contigs (CORREÇÃO 2)
-    CONTIGS_FILE="$CONTIGS_PATH/final.contigs.fa"
-
+    # Check if the contigs file exists
     if [[ -f "$CONTIGS_FILE" ]]; then
-        echo "Indexando contigs para a amostra: $SAMPLE..."
+        echo "Indexing $SAMPLE..."
+
+        # Index the contigs
         bowtie2-build "$CONTIGS_FILE" "$OUTPUT_DIR/${SAMPLE}_indexed"
+
+        # Check if the command was successful
         if [[ $? -eq 0 ]]; then
-            echo "Indexação concluída para $SAMPLE."
+            echo "Indexing completed for $SAMPLE."
         else
-            echo "ERRO ao indexar $SAMPLE."
+            echo "Error indexing $SAMPLE."
         fi
     else
-        echo "AVISO: Arquivo 'final.contigs.fa' não encontrado em '$CONTIGS_PATH', pulando..."
+        echo "Contigs file not found for $SAMPLE, skipping..."
     fi
 done
-
-if [ $SAMPLES_FOUND -eq 0 ]; then
-    echo "AVISO: Nenhum diretório de amostra (SRR, ERR, DRR) foi encontrado em '$MEGAHIT_DIR'."
-fi
-
-echo ""
-echo "Processo de indexação concluído."
