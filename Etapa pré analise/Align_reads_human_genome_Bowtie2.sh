@@ -60,6 +60,7 @@ for FILE1 in $FASTQ_PATH/*_1.fastq.gz; do
     -1 $FILE1 \
     -2 $FILE2 \
     --threads 8 \
+    --very-sensitive-local #Deixará muito mais sensivel no alinhamento, irá demorar mais
     -S $OUTPUT_PATH/${BASENAME}_aligned.sam
 
 done
