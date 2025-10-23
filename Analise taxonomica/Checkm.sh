@@ -13,7 +13,7 @@ eval "$(conda shell.bash hook)"
 conda activate checkm_env
 
 # Base path containing MetaBAT2 bins
-BASE_DIR="/temporario2/9290665/DADOS_ALZHEIMER/laske/metabat2_outputs"
+BASE_DIR="caminho MetaBAT2"
 
 # Output directory where CheckM results will be saved
 OUT_BASE="$BASE_DIR/checkm_results"
