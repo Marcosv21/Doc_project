@@ -3,14 +3,9 @@
 # Install:
 #   conda install -c bioconda samtools
 
-# --- Início da Seção Interativa ---
-echo "--- Configuração de Caminhos para o Script ---"
+INPUT_DIR =  insira o caminho completo para o diretório de ENTRADA (com os arquivos .sam)
 
-# Pede ao usuário para inserir o diretório de entrada e armazena na variável INPUT_DIR
-read -p "Por favor, insira o caminho completo para o diretório de ENTRADA (com os arquivos .sam): " INPUT_DIR
-
-# Pede ao usuário para inserir o diretório de saída e armazena na variável OUTPUT_DIR
-read -p "Agora, insira o caminho completo para o diretório de SAÍDA (onde os arquivos .fastq serão salvos): " OUTPUT_DIR_BASE
+OUTPUT_DIR_BASE = caminho completo para o diretório de SAÍDA (onde os arquivos .fastq serão salvos)
 
 # --- Nome da pasta de saída pré-definido ---
 NEW_FOLDER_NAME="Human_genome_removed"
@@ -21,8 +16,6 @@ echo "Diretório de entrada definido como: $INPUT_DIR"
 echo "Diretório de saída definido como: $OUTPUT_DIR"
 echo "------------------------------------------------"
 echo ""
-# --- Fim da Seção Interativa ---
-
 
 # Script to extract only the unaligned sequences with the human genome and convert them back to FASTQ, separating forward and reverse
 
