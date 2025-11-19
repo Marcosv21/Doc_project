@@ -48,14 +48,14 @@ for FILE1 in "$INPUT_DIR"/*_1.fastq.gz; do
 
     
     if [ ! -f "$FILE2" ]; then
-        echo "Par R2 não encontrado para $BASENAME. Pulando."
+        echo "R2 pair not found for $BASENAME. Skipping."
         continue
     fi
 
     echo "--------------------------------------------------"
     echo "Processing: $BASENAME"
     
-    # Executa o fastp
+    # Run the fastp
     # Add --thread (nucleus use) Change as needed and possible in your system
     fastp -i "$FILE1" -I "$FILE2" \
           -o "$OUTPUT1" -O "$OUTPUT2" \
