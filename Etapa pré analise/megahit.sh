@@ -4,7 +4,7 @@
 #   conda install -c bioconda megahit
 eval "$(conda shell.bash hook)"
 
-# 2. Checks if the 'fastp_env' environment 
+# 2. Checks if the 'megahit' environment 
 if conda info --envs | grep -q "^megahit"; then
     echo "Env 'megahit' already exists."
 else
