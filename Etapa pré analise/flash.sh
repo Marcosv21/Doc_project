@@ -2,8 +2,18 @@
 # Dependencies: FLASH
 # Install:
 #   conda install -c bioconda flash
-# Activate the Conda environment -- if need be
 eval "$(conda shell.bash hook)"
+
+# 2. Checks if the 'flash' environment 
+if conda info --envs | grep -q "^flash"; then
+    echo "Env 'flash' already exists."
+else
+    echo "env create 'megahit'..."
+    conda create -y -n flash
+    conda install -c flash
+fi
+
+# Activate the Conda environment -- if need be
 conda activate flash
 
 FASTQ_PATH = "/media/marcos/TRABALHO/PRJEB59406/fastp_filtered" #Pathway of the archive filtered (fastp)
