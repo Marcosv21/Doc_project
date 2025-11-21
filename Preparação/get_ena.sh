@@ -1,6 +1,6 @@
 #Don't forget to download the archive from ENA's site (script downloads wget)
 
-%%bash
+#!/bin/bash
 
 FASTQ_DIR="/home/marcos/PRJEB59406/fastq_files"
 URL_LIST="/home/marcos/PRJEB59406/enasdownload.sh"
