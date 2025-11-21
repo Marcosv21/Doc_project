@@ -20,29 +20,24 @@ mkdir -p $OUTPUT_PATH
 
 #Verification construction 
 
-# Verifica se o arquivo FASTA (necessário para a construção) existe
 if [ ! -f "${GENOME_FASTA}" ]; then
-    echo "(ERRO CRÍTICO): O arquivo FASTA de referência '${GENOME_FASTA}' não foi encontrado."
-    echo "Verifique se o caminho para o genoma está correto."
+    echo "(ERROR): FASTA reference archive '${GENOME_FASTA}' not found."
+    echo "Check the pathway."
     exit 1
 fi
 
-# Verifica se o índice (arquivo .1.bt2) existe
+# Check if index (arquivo .1.bt2) exists
 if [ ! -f "${INDEX_BASE}.1.bt2" ]; then
-    echo "Índice do Bowtie 2 não encontrado. Construindo índice agora..."
-    
-    # Executa a construção do índice
+    echo "Index Bowtie 2 not found. Building index..."
     bowtie2-build "${GENOME_FASTA}" "${INDEX_BASE}"
-    
-    # Verifica se a construção foi bem-sucedida
     if [ $? -eq 0 ]; then
-        echo "Índice construído com sucesso: ${INDEX_BASE}"
+        echo "Index successfully built: ${INDEX_BASE}"
     else
-        echo "(ERRO DE CONSTRUÇÃO): Falha ao construir o índice do Bowtie 2. Encerrando."
+        echo "(ERROR): Fail building index."
         exit 1
     fi
 else
-    echo "Índice do Bowtie 2 (${INDEX_BASE}) já existe. Pulando a construção."
+    echo "Index Bowtie2 (${INDEX_BASE}) exists yet."
 fi
 
 # Loop through all *_1.fastq.gz files in the FASTQ_PATH
