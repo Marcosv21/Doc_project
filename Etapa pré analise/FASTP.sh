@@ -1,74 +1,44 @@
-%%bash
+#!/bin/bash
+# Dependencies: Fastp, Seqkit (optional for quality check)
+# Install: conda install -c bioconda fastp seqkit
 
-# 1. Start Conda environment
-set -e
+# Script for filtering using Fastp
+# NOTE: Always check for errors in case of corrupted FastQ files
+# If you encounter issues with a sample, check the quality using Seqkit
+# Example: seqkit stats ERR9578161.fastq.gz
+#Activate the Conda environment -- if need be
 eval "$(conda shell.bash hook)"
+conda activate fastp
 
-# 2. Checks if the 'fastp_env' environment 
-if conda info --envs | grep -q "^fastp_env"; then
-    echo "Env 'fastp_env' already exists."
-else
-    echo "env create 'fastp_env'..."
-    # create an env quietly (-y)
-    conda create -y -n fastp_env -c bioconda fastp seqkit
-fi
-
-# 3. Activate environment
-echo "activate env fastp_env..."
-conda activate fastp_env
-
-# 4. define input and output directories
+# Directory containing the files
 INPUT_DIR="/home/marcos/PRJEB59406/fastq_files"
-OUTPUT_DIR="/home/marcos/PRJEB59406/fastp_files"
+OUTPUT_DIR="/media/marcos/TRABALHO/PRJEB59406/fastp_filtered"
 
-# create output directory if it doesn't exist
+# Create output directory if it does not exist
 mkdir -p "$OUTPUT_DIR"
 
-# 5. Count input files
-count=$(ls "$INPUT_DIR"/*_1.fastq.gz 2>/dev/null | wc -l)
-
-if [ "$count" -eq 0 ]; then
-    echo "ERROR: No file *_1.fastq.gz in: $INPUT_DIR"
-    echo "Check if the path is correct and if previous downloads worked."
-    exit 1
-fi
-
-echo "$count files found. Starting processing..."
-
-# 6. Loop process 
+# Loop through _1.fastq.gz files
 for FILE1 in "$INPUT_DIR"/*_1.fastq.gz; do
-    
+    # Extract the sample base name (removes the "_1.fastq.gz" suffix)
     BASENAME=$(basename "$FILE1" "_1.fastq.gz")
+
+    # Define the second pair file
     FILE2="${INPUT_DIR}/${BASENAME}_2.fastq.gz"
-    
+
+    # Define output files
     OUTPUT1="${OUTPUT_DIR}/${BASENAME}_filtered_1.fastq.gz"
     OUTPUT2="${OUTPUT_DIR}/${BASENAME}_filtered_2.fastq.gz"
-    HTML_RPT="${OUTPUT_DIR}/${BASENAME}_report.html" 
-    JSON_RPT="${OUTPUT_DIR}/${BASENAME}_report.json"
 
-    
-    if [ ! -f "$FILE2" ]; then
-        echo "R2 pair not found for $BASENAME. Skipping."
-        continue
-    fi
+    # Run Fastp for the paired-end files
+    echo "Processing $BASENAME..."
+    fastp -i "$FILE1" -I "$FILE2" -o "$OUTPUT1" -O "$OUTPUT2" --detect_adapter_for_pe 
+    # (Not strictly necessary; the default method removes adapters by comparing forward and reverse sequences.
+    # A comparison between both methods showed only a 0.01% increase in removal using detect adapter 
+    # on already pre-cleaned sequences.)
 
-    echo "--------------------------------------------------"
-    echo "Processing: $BASENAME"
-    
-    # Run the fastp
-    # Add --thread (nucleus use) Change as needed and possible in your system
-    fastp -i "$FILE1" -I "$FILE2" \
-          -o "$OUTPUT1" -O "$OUTPUT2" \
-          -h "$HTML_RPT" -j "$JSON_RPT" \
-          --detect_adapter_for_pe \
-          --thread 8
-
-    # Checks for errors in fastp execution
+    # Check if the command was successful
     if [ $? -ne 0 ]; then
-        echo "ERROR in process $BASENAME"
+        echo "Error processing $BASENAME!" >&2
         exit 1
     fi
 done
-
-echo "--------------------------------------------------"
-echo "Processing completed!"
