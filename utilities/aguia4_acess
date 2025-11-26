@@ -1,0 +1,8 @@
+Abrir caminho em janela 1
+ssh -X -2 -L 8020:aguia4:22 17404478@shark.hpc.usp.br 
+
+Janela linux
+scp ./human_genome.gz 17404478@shark.hpc.usp.br:/home/17404478
+
+na janela shark
+scp ./human_genome.gz aguia4:/temporario2/17404478

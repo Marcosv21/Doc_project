@@ -1,0 +1,18 @@
+#!/bin/bash  -v
+
+#SBATCH --job-name=kegg_1
+#SBATCH --partition=SP2
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=20
+#SBATCH --mem-per-cpu=24000
+#SBATCH --time=24:00:00
+#SBATCH --mail-type=BEGIN
+#SBATCH --mail-type=END
+#SBATCH --mail-user=marcosvc@usp.br
+
+#Paste your code below this line:
+#In command line run the application:
+sbatch  _name your script.sh
+
+sbatch script_name.sh --dependency=afterany:id_job
+

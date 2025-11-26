@@ -2,16 +2,23 @@
 # Dependencies: Samtools
 # Install:
 #   conda install -c bioconda samtools
+# 1. Start Conda environment initialization
+set -e
+eval "$(conda shell.bash hook)"
 
-INPUT_DIR =  "/media/marcos/TRABALHO/PRJEB59406/Bowtie2_output"
-OUTPUT_DIR_BASE = "/home/marcos/PRJEB59406/cleaned_reads"
-# Cria o diretório de saída, se ele não existir
+# Activate environment
+echo "Activating env samtools..."
+conda activate samtools
+# Define paths
+INPUT_DIR="/temporario2/17404478/PRJEB59406/code/bowtie2_aligned"
+OUTPUT_DIR="/temporario2/17404478/PRJEB59406/code/cleaned_reads"
+# Create output directory if it does not exist
 mkdir -p "$OUTPUT_DIR"
 # Processing
 for SAM_FILE in "$INPUT_DIR"/*.sam; do
   BASENAME=$(basename "$SAM_FILE" .sam)
 
-  echo "Processando o arquivo: ${BASENAME}.sam"
+  echo "Processing archive: ${BASENAME}.sam"
   
   # Convert and filter SAM -> BAM
   samtools view -@ 8 -b -f 12 -F 256 "$SAM_FILE" > "$OUTPUT_DIR/${BASENAME}_filtered.bam" 
@@ -29,4 +36,4 @@ for SAM_FILE in "$INPUT_DIR"/*.sam; do
 done
 
 echo ""
-echo "Processamento concluído para todos os arquivos!"
+echo "Finished processing all files!"

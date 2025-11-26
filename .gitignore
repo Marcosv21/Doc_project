@@ -1,0 +1,27 @@
+# Ignorar arquivos de índice do Bowtie2
+*.bt2
+
+# Ignorar dados brutos de sequenciamento
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+
+# Ignorar arquivos de alinhamento
+*.sam
+*.bam
+*.bai
+*.json
+*.html
+
+# Ignorar pastas de dados temporários
+fastq_files/
+fastp_filtered/
+bowtie2_aligned/
+cleaned_reads/
+flash_merged_reads/
+
+# Ignorar arquivos compactados gerais
+*.zip
+*.tar.gz
+*.rar

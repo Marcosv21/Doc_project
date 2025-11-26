@@ -8,11 +8,11 @@
 # Example: seqkit stats ERR9578161.fastq.gz
 #Activate the Conda environment -- if need be
 eval "$(conda shell.bash hook)"
-conda activate fastp
+conda activate FASTP
 
 # Directory containing the files
 INPUT_DIR="/home/marcos/PRJEB59406/fastq_files"
-OUTPUT_DIR="/media/marcos/TRABALHO/PRJEB59406/fastp_filtered"
+OUTPUT_DIR="/home/marcos/PRJEB59406/fastp_filtered"
 
 # Create output directory if it does not exist
 mkdir -p "$OUTPUT_DIR"

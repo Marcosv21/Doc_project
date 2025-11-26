@@ -4,26 +4,14 @@
 #   conda install -c bioconda megahit
 eval "$(conda shell.bash hook)"
 
-# 2. Checks if the 'megahit' environment 
-if conda info --envs | grep -q "^megahit"; then
-    echo "Env 'megahit' already exists."
-else
-    echo "env create 'megahit'..."
-    conda create -y -n megahit
-    conda install -c megahit
-fi
-
 # 3. Activate environment
 echo "activate env megahit..."
 conda activate megahit
 
-FASTQ_PATH = "Insira o caminho para o diretório com as leituras PAREADAS (ex: *_R1.fastq)" 
-MERGED_PATH = "Insira o caminho para o diretório com as leituras UNIDAS (do FLASH) " 
-OUTPUT_PATH_BASE = "Insira o caminho para o diretório de SAÍDA principal"
+FASTQ_PATH="/home/marcos/PRJEB59406/cleaned_reads" 
+MERGED_PATH="/home/marcos/PRJEB59406/flash_merged_reads" 
+OUTPUT_PATH="/home/marcos/PRJEB59406/megahit_assemblies"
 
-NEW_FOLDER_NAME="megahit_assemblies"
-
-OUTPUT_PATH="${OUTPUT_PATH_BASE}/${NEW_FOLDER_NAME}"
 # Cria o diretório de saída se ele não existir
 echo "Criando diretório de saída em ${OUTPUT_PATH}..."
 mkdir -p "$OUTPUT_PATH"

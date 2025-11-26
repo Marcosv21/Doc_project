@@ -2,8 +2,8 @@
 
 #!/bin/bash
 
-FASTQ_DIR="/home/marcos/PRJEB59406/fastq_files"
-URL_LIST="/home/marcos/PRJEB59406/enasdownload.sh"
+FASTQ_DIR="/media/marcos/TRABALHO/PRJEB59406/fastq_files"
+URL_LIST="/home/marcos/PRJEB59406/enasdownload(1).sh"
 
 mkdir -p "$FASTQ_DIR"
 
