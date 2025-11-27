@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# -------------------- Dependencies --------------------
-# Required:
+# Dependencies: CheckM
+# Install:
 # - conda
 # - conda environment named 'checkm_env' with checkm installed
 # To create the environment, run:
@@ -10,10 +10,10 @@
 
 # Activate conda environment with CheckM
 eval "$(conda shell.bash hook)"
-conda activate checkm_env
+conda activate checkm
 
 # Base path containing MetaBAT2 bins
-BASE_DIR="caminho MetaBAT2"
+BASE_DIR="/home/marcos/PRJEB59406/MetaBAT2_bins"
 
 # Output directory where CheckM results will be saved
 OUT_BASE="$BASE_DIR/checkm_results"
