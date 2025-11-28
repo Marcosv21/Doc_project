@@ -1,0 +1,23 @@
+#!/bin/bash
+# Dependencies: Diamond
+# Install:
+# conda install bioconda::diamond
+
+#Changing fasta files to contain cazy family name in ID
+
+# Loop through the target files
+for file in nr_GH*.fasta; do
+    # Extract the CAZy family from the filename (e.g., GH101)
+    family=$(echo "$file" | grep -o 'GH[0-9]\+')
+
+    # Modify sequence identifiers and save to a new file
+    sed "s/^>\([^ ]*\)/>$family.\1/" "$file" > "mod_$file"
+
+    echo "Processed: $file -> mod_$file"
+done
+
+#merge all fasta files in one to makedb, you should run this command after the fasta files contain the right IDs.
+cat *.fasta > all_sequences.fasta
+
+#generating the database with diamond
+diamond makedb --in all_sequences.fasta -d all_sequences.dmnd
