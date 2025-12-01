@@ -5,7 +5,7 @@
 
 # Activate the Conda environment -- if need be
 eval "$(conda shell.bash hook)"
-conda activate bowtie2_env
+conda activate bowtie2
 
 # Define paths
 FASTQ_PATH="/home/marcos/PRJEB59406/cleaned_reads"
@@ -17,18 +17,15 @@ mkdir -p $OUTPUT_PATH
 
 # Loop through all *_1.fastq files in the FASTQ_PATH
 for FILE1 in "$FASTQ_PATH"/*_filtered_aligned_R1.fastq; do
-  # Get the base name of the sample (without the _R1.fastq suffix)
-  BASENAME=$(basename "$FILE1" "_filtered_aligned_R1.fastq")
+ BASENAME=$(basename "$FILE1" "_filtered_aligned_R1.fastq")
 
   # Define the corresponding file for the _2.fastq.gz pair
   FILE2="${FASTQ_PATH}/${BASENAME}_filtered_aligned_R2.fastq"
-  INDEX_FILE="${INDEX_PATH}/${BASENAME}_fna_indexed"
+  INDEX_FILE="${INDEX_PATH}/${BASENAME}_filtered_fna_indexed"
 
  # Check if both read files exist
   if [[ -f "$FILE1" && -f "$FILE2" ]]; then
-    # Print sample name
     echo "Processing sample: $BASENAME"
-    # Alignment with Bowtie2
     bowtie2 -x "$INDEX_FILE" \
       -1 "$FILE1" \
       -2 "$FILE2" \

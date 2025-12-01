@@ -1,22 +1,38 @@
-INPUT="/temporario2/9290665/mucin_proteins_db/faa_files/GH98.fasta" 
-
-cd-hit -i $INPUT -o nr_GH98.fasta -c 1.00 #the parameter 1.00 clusterize only sequences that are identical 
-
-#arquivos .out estão em ~/mucin_proteins_db/nr_faa_files/out
-
-#after removal of redundancy, files were edited to contain the name of the family at the identification line, using the following:
 #!/bin/bash
+# Dependencies: CD-HIT
+# Install: conda install -c bioconda cdhit
 
-# Loop through the target files
-for file in nr_GH*.fasta; do
-    # Extract the CAZy family from the filename (e.g., GH101)
-    family=$(echo "$file" | grep -o 'GH[0-9]\+')
+eval "$(conda shell.bash hook)"
+conda activate cdhit
 
-    # Modify the identifiers and save to a new file
-    sed "s/^>\([^ ]*\)/>$family.\1/" "$file" > "mod_$file"
+INPUT_DIR="/home/marcos/PRJEB59406/Data_base/FASTA"
+OUTPUT_DIR="/home/marcos/PRJEB59406/Data_base/FASTA/sialidase_families"
 
-    echo "Processed: $file -> mod_$file"
+mkdir -p "$OUTPUT_DIR"
+
+for FILE in "$INPUT_DIR"/*.fasta; do
+    
+    [ -e "$FILE" ] || continue
+
+    FAMILY=$(basename "$FILE" .fasta)
+    
+    echo "------------------------------------------------"
+    echo "Processing family: $FAMILY"
+
+    echo "  -> Running CD-HIT to remove redundancy..."
+    cd-hit -i "$FILE" -o "$OUTPUT_DIR/nr_${FAMILY} 100.fasta" -c 1.0 -d 0 -n 5 -M 16000 -T 8
+    cd-hit -i "$FILE" -o "$OUTPUT_DIR/nr_${FAMILY} 90.fasta" -c 0.9 -d 0 -n 5 -M 16000 -T 8
+    cd-hit -i "$FILE" -o "$OUTPUT_DIR/nr_${FAMILY} 80.fasta" -c 0.8 -d 0 -n 4 -M 16000 -T 8
+    sed "s/^>/>${FAMILY}./" "$OUTPUT_DIR/nr_${FAMILY}.fasta" > "$OUTPUT_DIR/final_${FAMILY}.fasta"
+
 done
 
-#Also, files were concatenaded. This allowed to make only one database for comparison with diamond. 
-cat *.fasta > all_sequences.fasta
+echo "------------------------------------------------"
+echo "Merging all non-redundant fasta files into a single file..."
+
+cat "$OUTPUT_DIR"/final_*.fasta > "$OUTPUT_DIR/all_sequences.fasta"
+
+# (Optional) create a datebank DIAMOND
+# diamond makedb --in "$OUTPUT_DIR/all_sequences.fasta" -d "$OUTPUT_DIR/all_sequences"
+
+echo "Finish! Database created at: $OUTPUT_DIR/all_sequences.fasta"

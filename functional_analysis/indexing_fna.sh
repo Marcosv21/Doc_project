@@ -8,7 +8,7 @@ eval "$(conda shell.bash hook)"
 conda activate bowtie2
 
 # Directories
-PRODIGAL_DIR="/home/marcos/PRJEB59406/diamond_results"
+PRODIGAL_DIR="/home/marcos/PRJEB59406/filtered_fna"
 OUTPUT_DIR="/home/marcos/PRJEB59406/indexed_fna"
 
 # Create the output directory if it doesn't exist

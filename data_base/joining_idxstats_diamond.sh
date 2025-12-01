@@ -3,15 +3,15 @@ import pandas as pd
 
 # Load the idxstats file and keep only CDS and abundance columns
 def load_idxstats(path):
-    df = pd.read_csv(path, sep='\t')
-    df = df[['CDS', 'Abundance']]
+    df= pd.read_csv(path, sep='\t')
+    df= df[['CDS','Abundance']]
     return df
 
 # Load the DIAMOND alignment file and rename columns for consistency
 def load_diamond(path):
-    df = pd.read_csv(path, sep='\t')
+    df = pd.read_csv(path, sep ='\t')
     df = df[['qseqid', 'sseqid']]
-    df.rename(columns={'qseqid': 'CDS', 'sseqid': 'Protein'}, inplace=True)
+    df.rename (columns={'qseqid':'CDS','sseqid':'Protein'},inplace= True )
     return df
 
 # Merge abundance data with DIAMOND hits across all samples
@@ -59,11 +59,11 @@ output_file = "/content/drive/MyDrive/Doutorado/dados_unificados_com_grupo.tsv"
 df_unified = pd.read_csv(unified_file, sep='\t')
 
 # Load the sample metadata file   # This file must contain a mapping between each sample ID and its corresponding group (e.g., Disease or Control)
-df_samples = pd.read_csv(samples_file)
-df_samples.rename(columns={'Run Accession': 'Sample', 'AMYLOID': 'Group'}, inplace=True)
+df_samples= pd.read_csv(samples_file)
+df_samples.rename (columns= {'Run Accession': 'Sample', 'AMYLOID': 'Group'}, inplace=True)
 
 # Merge group information into the unified table
-df_final = df_unified.merge(df_samples[['Sample', 'Group']], on='Sample', how='left')
+df_final= df_unified.merge(df_samples ['Sample','Group'], on='Sample', how='left')
 
 # Save the final table with group information added
 df_final.to_csv(output_file, sep='\t', index=False)

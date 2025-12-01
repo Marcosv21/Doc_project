@@ -11,14 +11,19 @@ dir="/home/marcos/PRJEB59406/prodigal_outputs"
 out_dir="/home/marcos/PRJEB59406/diamond_results"
 mkdir -p "$out_dir"
 # Define Diamond database path
-db="/home/marcos/PRJEB59406/all_sequences.dmnd"  # DIAMOND database
+db="/home/marcos/PRJEB59406/Data_base/diamond_db_named/all_sequences_named.dmnd"  # DIAMOND database
 
 # Loop to process all .faa files in the directory
 for query in $dir/*.faa; do
     filename=$(basename "$query" .faa)
     output="${out_dir}/${filename}_matches.tsv"  # Output file name
     echo "Running DIAMOND for $query..."
-    diamond blastp -d "$db" -q "$query" -o "$output" --outfmt 6 qseqid sseqid pident length qlen slen mismatch gapopen evalue bitscore
+    diamond blastp -d "$db" \
+                   -q "$query" \
+                   -o "$output" \
+                   --mid-sensitive \
+                   --outfmt 6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen \
+
 done
 
 echo "Finished!"

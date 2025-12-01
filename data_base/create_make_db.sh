@@ -1,23 +1,34 @@
 #!/bin/bash
-# Dependencies: Diamond
-# Install:
-# conda install bioconda::diamond
+# Dependencies: diamond
+# Install: conda install -c bioconda diamond
 
-#Changing fasta files to contain cazy family name in ID
+eval "$(conda shell.bash hook)"
+conda activate diamond
 
-# Loop through the target files
-for file in nr_GH*.fasta; do
-    # Extract the CAZy family from the filename (e.g., GH101)
-    family=$(echo "$file" | grep -o 'GH[0-9]\+')
+INPUT_DIR="/home/marcos/PRJEB59406/Data_base/FASTA/sialidase_families"
 
-    # Modify sequence identifiers and save to a new file
-    sed "s/^>\([^ ]*\)/>$family.\1/" "$file" > "mod_$file"
+OUTPUT_DIR="/home/marcos/PRJEB59406/Data_base/diamond_db"
+mkdir -p "$OUTPUT_DIR"
 
-    echo "Processed: $file -> mod_$file"
+echo "Starting header modification and database creation..."
+
+for file in "$INPUT_DIR"/nr_*.fasta; do
+    
+    [ -e "$file" ] || continue
+
+    filename=$(basename "$file" .fasta)
+    
+    family=${filename#nr_}
+
+    mod_file="$OUTPUT_DIR/mod_${family}.fasta"
+
+    sed "s/^>/>${family}./" "$file" > "$mod_file"
+
+    echo "Processing: $family -> $mod_file"
 done
 
-#merge all fasta files in one to makedb, you should run this command after the fasta files contain the right IDs.
-cat *.fasta > all_sequences.fasta
+cat "$OUTPUT_DIR"/mod_*.fasta > "$OUTPUT_DIR/all_sequences.fasta"
+diamond makedb --in "$OUTPUT_DIR/all_sequences.fasta" -d "$OUTPUT_DIR/all_sequences"
+echo "Databank in: $OUTPUT_DIR/all_sequences.dmnd"
 
-#generating the database with diamond
-diamond makedb --in all_sequences.fasta -d all_sequences.dmnd
+rm "$OUTPUT_DIR"/mod_*.fasta
