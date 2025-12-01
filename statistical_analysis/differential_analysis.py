@@ -114,7 +114,7 @@ plt.figure(figsize=(10, 8))
 
 sns.scatterplot(data=df_res, x='log2FC', y=-np.log10(df_res['p_adj'] + 1e-300), 
                 hue='Status', 
-                palette={f'Up in {GROUP_B}': '#D62828', f'Down in {GROUP_B}': '#003049', 'NS': 'lightgrey'},
+                palette={f'Up in {GROUP_B}': '#2ca25f', f'Down in {GROUP_B}': '#e34a33', 'NS': 'lightgrey'},
                 alpha=0.8, s=30, edgecolor=None)
 
 plt.axvline(x=1, color='black', linestyle='--', lw=0.8, alpha=0.5)

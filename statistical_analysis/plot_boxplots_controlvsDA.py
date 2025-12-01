@@ -84,7 +84,7 @@ df_melted['Group'] = df_melted['Sample'].apply(lambda x: 'Control' if x in contr
 plt.figure(figsize=(10, 8))
 
 sns.boxplot(data=df_melted, x='gene_id', y='TPM', hue='Group', 
-            palette={'Control': '#A8DADC', 'Dermatitis': '#E63946'}, 
+            palette={'Control': '#2ca25f', 'Dermatitis': '#e34a33'}, 
             showfliers=False) 
 
 sns.stripplot(data=df_melted, x='gene_id', y='TPM', hue='Group', 
