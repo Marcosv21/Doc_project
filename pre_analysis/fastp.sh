@@ -11,7 +11,7 @@ eval "$(conda shell.bash hook)"
 conda activate FASTP
 
 # Directory containing the files
-INPUT_DIR="/home/marcos/PRJEB59406/fastq_files"
+INPUT_DIR="/media/marcos/TRABALHO/PRJEB59406/fastq_files"
 OUTPUT_DIR="/home/marcos/PRJEB59406/fastp_filtered"
 
 # Create output directory if it does not exist

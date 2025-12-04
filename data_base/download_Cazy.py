@@ -31,9 +31,9 @@ def download_sequences():
                     parts = line.strip().split()
                     
                     if len(parts) > 2:
-                        kingdom = parts[1]            # Pega a segunda palavra da linha
-                        db_source = parts[-1].lower() # Pega a última palavra
-                        accession_id = parts[-2]      # Pega a penúltima palavra
+                        kingdom = parts[1]            
+                        db_source = parts[-1].lower() 
+                        accession_id = parts[-2]      
                         if kingdom == "Bacteria" and ('ncbi' in db_source or 'genbank' in db_source):
                             all_ids.add(accession_id)
                             bacteria_count += 1
@@ -74,7 +74,7 @@ def download_sequences():
             except Exception as e:
                 print(f"   Fail {start}-{end}: {e}")
                 with open("failed_batches_log.txt", "a") as log:
-                    log.write(f"Lote {start}-{end} falhou. Erro: {e}\nIDs: {batch_ids}\n")
+                    log.write(f" {start}-{end} fail. Error: {e}\nIDs: {batch_ids}\n")
 
     print(f"\n Finish: {OUTPUT_FILE}")
 

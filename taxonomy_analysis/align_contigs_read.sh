@@ -5,7 +5,7 @@
 
 # Activate the Conda environment
 eval "$(conda shell.bash hook)"
-conda activate bowtie2_env
+conda activate bowtie2
 
 # Define paths
 FASTQ_PATH="/home/marcos/PRJEB59406/cleaned_reads"

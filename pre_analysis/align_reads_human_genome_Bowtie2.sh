@@ -8,9 +8,9 @@ eval "$(conda shell.bash hook)"
 conda activate bowtie2
 
 # Define paths
-FASTQ_PATH="/temporario2/17404478/PRJEB59406/code/fastp_filtered"
-GENOME_INDEX_PATH="/temporario2/17404478/PRJEB59406/genome/human_genome/GRCh38_index"
-OUTPUT_PATH="/temporario2/17404478/PRJEB59406/code/bowtie2_aligned"
+FASTQ_PATH="/home/marcos/PRJEB59406/fastp_filtered"
+GENOME_INDEX_PATH="/home/marcos/human_genome/GRCh38_index"
+OUTPUT_PATH="/home/marcos/PRJEB59406/bowtie2_aligned"
 
 # Create the output directory if it doesn't exist
 mkdir -p $OUTPUT_PATH
