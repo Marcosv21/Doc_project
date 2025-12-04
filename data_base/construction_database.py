@@ -1,7 +1,7 @@
 #Data about the query proteins was first obtained from CAZy, then filtered at an excell sheet for only Bacteria and proteins sequences available at ncbi. After that, accessions lists were saved
 #and then upload at the ncbi Batch Entrez for filtering of hypothetical proteins (customized filter). Batch Entrez would only provide a list of the hypothetical proteins, which were then removed
 #from the original list through a simple python code:
-#import pandas as pd
+import pandas as pd
 
 # Carregar a lista original
 df_original = pd.read_csv("accession_list_GH2.txt", header=None, names=["accession"])

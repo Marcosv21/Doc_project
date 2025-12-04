@@ -5,7 +5,7 @@
 eval "$(conda shell.bash hook)"
 conda activate diamond
 
-INPUT_DIR="/home/marcos/PRJEB59406/Data_base/FASTA/sialidase_families"
+INPUT_DIR="/home/marcos/PRJEB59406/Data_base/sialidase_families"
 OUTPUT_DIR="/home/marcos/PRJEB59406/Data_base/diamond_db_named"
 mkdir -p "$OUTPUT_DIR"
 
