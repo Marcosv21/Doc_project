@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 BASE_DIR = "/home/marcos/PRJEB59406"
-FILE_TPM = f"{BASE_DIR}/abundance_results/tpm_matrix.tsv" 
+FILE_TPM = f"{BASE_DIR}/abundance_results/rpkm_matrix.tsv" 
 OUTPUT_DIR = f"{BASE_DIR}/abundance_results"
 FILE_SAMPLE_MAP = f"{BASE_DIR}/sample_map.csv"
 
@@ -25,7 +25,7 @@ if os.path.exists(FILE_SAMPLE_MAP):
 else:
     print("\n2. Sample map not found. Proceeding with original column names.\n")
 
-file_out = os.path.join(OUTPUT_DIR, "tpm_matrix_final.tsv")
+file_out = os.path.join(OUTPUT_DIR, "rpkm_matrix_final.tsv")
 df.to_csv(file_out, sep="\t")
 
 try:
@@ -44,7 +44,7 @@ try:
                        dendrogram_ratio=(.1, .2), 
                        cbar_pos=(0, .2, .03, .4))
 
-    g.ax_heatmap.set_title(f"Top {50} Genes (TPM abundance)", pad=100)
+    g.ax_heatmap.set_title(f"Top {50} Genes (RPKM abundance)", pad=100)
     
     plt.setp(g.ax_heatmap.get_xticklabels(), rotation=45, ha="right", fontsize=10)
     plt.setp(g.ax_heatmap.get_yticklabels(), rotation=0, fontsize=8) 

@@ -10,15 +10,15 @@ OUTPUT_DIR = f"{BASE_DIR}/abundance_results/plots_comparativos"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Select table (Family names vs Original IDs)
-if os.path.exists(f"{BASE_DIR}/abundance_results/tpm_matrix_families.tsv"):
-    FILE_TPM = f"{BASE_DIR}/abundance_results/tpm_matrix_families.tsv"
+if os.path.exists(f"{BASE_DIR}/abundance_results/rpkm_matrix_families.tsv"):
+    FILE_RPKM = f"{BASE_DIR}/abundance_results/rpkm_matrix_families.tsv"
     print("-> Using table with family names.")
 else:
-    FILE_TPM = f"{BASE_DIR}/abundance_results/tpm_matrix.tsv"
+    FILE_RPKM = f"{BASE_DIR}/abundance_results/rpkm_matrix.tsv"
     print("-> Using original table (k141...).")
 
 print("1. Loading data...")
-df = pd.read_csv(FILE_TPM, sep="\t", index_col="gene_id")
+df = pd.read_csv(FILE_RPKM, sep="\t", index_col="gene_id")
 
 if not os.path.exists(FILE_SAMPLE_MAP):
     print("\nERROR: 'sample_map.csv' not found!")
@@ -77,21 +77,21 @@ print(f"Plotting: {top_genes}")
 cols_to_plot = control + sick
 df_plot = df.loc[top_genes, cols_to_plot].reset_index()
 
-df_melted = df_plot.melt(id_vars='gene_id', var_name='Sample', value_name='TPM')
+df_melted = df_plot.melt(id_vars='gene_id', var_name='Sample', value_name='RPKM')
 
 df_melted['Group'] = df_melted['Sample'].apply(lambda x: 'Control' if x in control else 'Dermatitis')
 
 plt.figure(figsize=(10, 8))
 
-sns.boxplot(data=df_melted, x='gene_id', y='TPM', hue='Group', 
+sns.boxplot(data=df_melted, x='gene_id', y='RPKM', hue='Group', 
             palette={'Control': '#2ca25f', 'Dermatitis': '#e34a33'}, 
             showfliers=False) 
 
-sns.stripplot(data=df_melted, x='gene_id', y='TPM', hue='Group', 
+sns.stripplot(data=df_melted, x='gene_id', y='RPKM', hue='Group', 
               dodge=True, color='black', alpha=0.6, jitter=True)
 
 plt.title("Top differential genes", fontsize=16)
-plt.ylabel("TPM Abundance", fontsize=12)
+plt.ylabel("RPKM Abundance", fontsize=12)
 plt.xlabel("Gene ID", fontsize=12)
 plt.xticks(rotation=45, ha='right')
 plt.tight_layout()

@@ -3,15 +3,15 @@
 # Install:
 #   conda install -c bioconda samtools
 # 1. Start Conda environment initialization
-set -e
+
 eval "$(conda shell.bash hook)"
 
 # Activate environment
 echo "Activating env samtools..."
 conda activate samtools
 # Define paths
-INPUT_DIR="/temporario2/17404478/PRJEB59406/code/bowtie2_aligned"
-OUTPUT_DIR="/temporario2/17404478/PRJEB59406/code/cleaned_reads"
+INPUT_DIR="/media/marcos/TRABALHO/PRJEB59406/bowtie2_aligned"
+OUTPUT_DIR="/home/marcos/PRJEB59406/cleaned_reads"
 # Create output directory if it does not exist
 mkdir -p "$OUTPUT_DIR"
 # Processing

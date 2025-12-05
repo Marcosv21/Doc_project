@@ -9,11 +9,11 @@ import os
 BASE_DIR = "/home/marcos/PRJEB59406"
 FILE_SAMPLE_MAP = f"{BASE_DIR}/sample_map.csv"
 
-if os.path.exists(f"{BASE_DIR}/abundance_results/tpm_matrix_families.tsv"):
-    FILE_TPM = f"{BASE_DIR}/abundance_results/tpm_matrix_families.tsv"
+if os.path.exists(f"{BASE_DIR}/abundance_results/rpkm_matrix_families.tsv"):
+    FILE_TPM = f"{BASE_DIR}/abundance_results/rpkm_matrix_families.tsv"
     print("-> Using renamed table (families)")
 else:
-    FILE_TPM = f"{BASE_DIR}/abundance_results/tpm_matrix.tsv"
+    FILE_TPM = f"{BASE_DIR}/abundance_results/rpkm_matrix.tsv"
     print("-> Using original table")
 
 OUTPUT_DIR = f"{BASE_DIR}/abundance_results/differential_analysis"
