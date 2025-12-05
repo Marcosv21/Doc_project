@@ -24,7 +24,7 @@ def main():
     
     df_tax['mag_id'] = df_tax['user_genome'].astype(str).str.replace(r'\.(fa|fasta|fna)$', '', regex=True)
     
-    print(f"   Taxonomia carregada para {len(df_tax)} MAGs.")
+    print(f"   Taxonomy loaded for {len(df_tax)} MAGs.")
 
     diamond_files = glob.glob(os.path.join(DIAMOND_DIR, "*_sialidase_hits.tsv"))
     
@@ -43,29 +43,28 @@ def main():
                 
                 mag_sialidase_data.append({
                     'mag_id': mag_id,
-                    'tem_sialidase': 'SIM',
-                    'num_copias_gene': num_hits,
-                    'melhor_hit_db': best_hit
+                    'has_sialidase': 'YES',        
+                    'gene_copy_number': num_hits,  
+                    'best_db_hit': best_hit        
                 })
             except pd.errors.EmptyDataError:
-               mag_sialidase_data.append({'mag_id': mag_id, 'tem_sialidase': 'NÃO', 'num_copias_gene': 0, 'melhor_hit_db': '-'})
+               mag_sialidase_data.append({'mag_id': mag_id, 'has_sialidase': 'NO', 'gene_copy_number': 0, 'best_db_hit': '-'})
         else:
-            mag_sialidase_data.append({'mag_id': mag_id, 'tem_sialidase': 'NÃO', 'num_copias_gene': 0, 'melhor_hit_db': '-'})
+            mag_sialidase_data.append({'mag_id': mag_id, 'has_sialidase': 'NO', 'gene_copy_number': 0, 'best_db_hit': '-'})
 
     df_func = pd.DataFrame(mag_sialidase_data)
    
-    print("\n3. Cruzando as tabelas...")
+    print("\n3. Merging tables...")
     
     df_final = pd.merge(df_tax, df_func, on='mag_id', how='left')
     
-    df_final['tem_sialidase'] = df_final['tem_sialidase'].fillna('Sem Dados')
-    df_final['num_copias_gene'] = df_final['num_copias_gene'].fillna(0)
+    df_final['has_sialidase'] = df_final['has_sialidase'].fillna('No Data')
+    df_final['gene_copy_number'] = df_final['gene_copy_number'].fillna(0)
     
-    df_final = df_final[['mag_id', 'classification', 'tem_sialidase', 'num_copias_gene', 'melhor_hit_db']]
+    df_final = df_final[['mag_id', 'classification', 'has_sialidase', 'gene_copy_number', 'best_db_hit']]
     
-    print(f"\n4. Salvando em {OUTPUT_FILE}...")
+    print(f"\n4. Saving to {OUTPUT_FILE}...")
     df_final.to_excel(OUTPUT_FILE, index=False)
-    print("✅ Sucesso! Tabela criada.")
-
+    print("Done.")
 if __name__ == "__main__":
     main()
