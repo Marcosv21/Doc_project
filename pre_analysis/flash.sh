@@ -2,14 +2,14 @@
 # Dependencies: FLASH
 # Install:
 #   conda install -c bioconda flash
-set -e
+
 eval "$(conda shell.bash hook)"
 
 # Activate the Conda environment -- if need be
 conda activate flash
 
-FASTQ_PATH="/temporario2/17404478/PRJEB59406/code/cleaned_reads" 
-OUTPUT_PATH="/temporario2/17404478/PRJEB59406/code/flash_merged_reads" 
+FASTQ_PATH="/home/marcos/PRJEB59406/cleaned_reads" 
+OUTPUT_PATH="/temporario2/17404478/PRJEB59406/merged_reads" 
 
 mkdir -p "$OUTPUT_PATH"
 

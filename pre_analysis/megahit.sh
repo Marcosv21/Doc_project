@@ -8,12 +8,10 @@ eval "$(conda shell.bash hook)"
 echo "activate env megahit..."
 conda activate megahit
 
-FASTQ_PATH="/home/marcos/PRJEB59406/cleaned_reads" 
-MERGED_PATH="/home/marcos/PRJEB59406/flash_merged_reads" 
-OUTPUT_PATH="/home/marcos/PRJEB59406/megahit_assemblies"
+FASTQ_PATH="/temporario2/17404478/PRJEB59406/cleaned_reads" 
+MERGED_PATH="/media/marcos/TRABALHO/PRJEB59406/merged_reads" 
+OUTPUT_PATH="/media/marcos/TRABALHO/PRJEB59406/megahit_assemblies"
 
-# Cria o diretório de saída se ele não existir
-echo "Criando diretório de saída em ${OUTPUT_PATH}..."
 mkdir -p "$OUTPUT_PATH"
 
 #Loop to proccess all files in FASTQ_PATH
