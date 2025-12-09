@@ -5,46 +5,46 @@ from statsmodels.stats.multitest import multipletests
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
-
+# Define file paths and directories
 BASE_DIR = "/home/marcos/PRJEB59406"
 FILE_SAMPLE_MAP = f"{BASE_DIR}/sample_map.csv"
+# Check for renamed table
+if os.path.exists(f"{BASE_DIR}/abundance_results/rpkm_matrix_families.tsv"): # If renamed table exists
+    FILE_RPKM = f"{BASE_DIR}/abundance_results/rpkm_matrix_families.tsv" # Use renamed table
+    print("-> Using renamed table (families)") # Indicate usage of renamed table
+else: # Use original table
+    FILE_RPKM = f"{BASE_DIR}/abundance_results/rpkm_matrix.tsv" # Use original table
+    print("-> Using original table") # Indicate usage of original table
 
-if os.path.exists(f"{BASE_DIR}/abundance_results/rpkm_matrix_families.tsv"):
-    FILE_TPM = f"{BASE_DIR}/abundance_results/rpkm_matrix_families.tsv"
-    print("-> Using renamed table (families)")
-else:
-    FILE_TPM = f"{BASE_DIR}/abundance_results/rpkm_matrix.tsv"
-    print("-> Using original table")
+OUTPUT_DIR = f"{BASE_DIR}/abundance_results/differential_analysis" # Define output directory
+os.makedirs(OUTPUT_DIR, exist_ok=True) # Create output directory if it doesn't exist
+# Load RPKM data
+print("Loading data...") # Indicate data loading
+df_tpm = pd.read_csv(FILE_RPKM, sep="\t", index_col="gene_id") # Read RPKM matrix
 
-OUTPUT_DIR = f"{BASE_DIR}/abundance_results/differential_analysis"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+if os.path.exists(FILE_SAMPLE_MAP): # Check if sample map file exists
+    print("   Loading sample map...") # Indicate loading of sample map
+    try: # Load sample map and rename columns
+        sample_map = pd.read_csv(FILE_SAMPLE_MAP, header=None, index_col=0)[1].to_dict() # Read sample map into a dictionary
+    except Exception as e: # Catch any exceptions that occur during processing
+        sample_map = {} # Use empty dictionary if error occurs
+else: # Sample map file does not exist
+    sample_map = {} # Use empty dictionary
 
-print("Loading data...")
-df_tpm = pd.read_csv(FILE_TPM, sep="\t", index_col="gene_id")
+groups = {} # Initialize dictionary to hold groups
+print("Detecting groups...") # Indicate group detection
 
-if os.path.exists(FILE_SAMPLE_MAP):
-    print("   Loading sample map...")
-    try:
-        sample_map = pd.read_csv(FILE_SAMPLE_MAP, header=None, index_col=0)[1].to_dict()
-    except Exception as e:
-        sample_map = {}
-else:
-    sample_map = {}
-
-groups = {}
-print("Detecting groups...")
-
-for col_name in df_tpm.columns:
+for col_name in df_tpm.columns: # Iterate over each column in the DataFrame
     if col_name in sample_map:
         name_to_check = sample_map[col_name].lower() # Use translated name
     else:
         name_to_check = col_name.lower() # Use original name
 
-    g_name = None
-    if "control" in name_to_check or "controle" in name_to_check:
-        g_name = "Control"
-    elif "atopic" in name_to_check or "dermatite" in name_to_check or "disease" in name_to_check:
-        g_name = "Dermatitis"
+    g_name = None # Initialize group name as None
+    if "control" in name_to_check or "controle" in name_to_check: # Check for control keywords
+        g_name = "Control" # Assign to Control group
+    elif "atopic" in name_to_check or "dermatite" in name_to_check or "disease" in name_to_check: # Check for disease keywords
+        g_name = "Dermatitis" # Assign to Dermatitis group
     
     if g_name:
         if g_name not in groups: groups[g_name] = []

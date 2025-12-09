@@ -35,3 +35,11 @@ for FILE1 in "$FASTQ_PATH"/*_filtered_aligned_R1.fastq; do
     echo "Warning: Missing pair for $BASENAME. Skipping alignment."
   fi
 done
+
+#    bowtie2 -x "$INDEX_FILE" \ # Define the indexed reference genome
+#      -1 "$FILE1" \ # Define the first read file
+#      -2 "$FILE2" \ # Define the second read file
+#      --threads 8 \ # Use 8 threads for alignment
+#      -S "$OUTPUT_PATH/${BASENAME}_aligned_fna.sam" # Define the output SAM file
+#  else
+#    echo "Warning: Missing pair for $BASENAME. Skipping alignment."

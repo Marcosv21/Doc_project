@@ -18,7 +18,7 @@ for query in $dir/*.faa; do
     filename=$(basename "$query" .faa)
     output="${out_dir}/${filename}_matches.tsv"  # Output file name
     echo "Running DIAMOND for $query..."
-    diamond blastp -d "$db" \
+    diamond blastp -d "$db" \ 
                    -q "$query" \
                    -o "$output" \
                    --mid-sensitive \
@@ -27,3 +27,8 @@ for query in $dir/*.faa; do
 done
 
 echo "Finished!"
+#  diamond blastp -d "$db" \ Define Diamond database path
+#                   -q "$query" \ Define query file
+#                   -o "$output" \ Define output file
+#                   --mid-sensitive \ Use mid-sensitive mode (balances speed and sensitivity)
+#                   --outfmt 6 (Define format of the outpu, number 6 equal BLAST tabular format) qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen \ Define output format (tabular with specific fields)
