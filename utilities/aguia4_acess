@@ -1,8 +1,21 @@
-Abrir caminho em janela 1
-ssh -X -2 -L 8020:aguia4:22 17404478@shark.hpc.usp.br 
+Antes de tudo, compacte o arquivo genome fasta
+gzip human_genome.fna
 
-Janela linux
-scp ./human_genome.gz 17404478@shark.hpc.usp.br:/home/17404478
+Instale o id_ed na sua maquina local
+scp 17404478@shark.hpc.usp.br:/home/17404478/.ssh/id_ed25519 .
+chmod 600 id_ed25519
+
+Para enviar arquivos para aguia4 use o comando abaixo na sua maquina local
+Abrir caminho em janela 1 (Não esqueça de ajustar o caminho dos arquivos) linux:
+scp -r -P 8020 -i ./id_ed25519 ./Data_base.zip 17404478@localhost:/temporario2/17404478/PRJEB59406 
+
+Para baixar arquivos da aguia4 para sua maquina local use o comando abaixo na sua maquina local no computador linux local:
+scp -r -P 8020 -i ./id_ed25519  17404478@localhost:/temporario2/17404478/PRJEB59406/fastp_quality .
+
+Janela 2 - Conectar na aguia4
+ssh -X -2 -L 8020:aguia4:22 17404478@shark.hpc.usp.br
 
 na janela shark
 scp ./human_genome.gz aguia4:/temporario2/17404478
+
+
