@@ -1,9 +1,12 @@
 #!/bin/bash
+#Dependencies: fastp
+#Install:
+#  conda install -c bioconda fastp
 
 eval "$(conda shell.bash hook)"
 conda activate FASTP
 
-INPUT_DIR="/media/marcos/TRABALHO/PRJEB59406/fastq_files"
+INPUT_DIR="/home/marcos/PRJEB59406/fastq_files"
 OUTPUT_DIR="/home/marcos/PRJEB59406/fastp_filtered"
 REPORT_DIR="/home/marcos/PRJEB59406/fastp_quality"
 

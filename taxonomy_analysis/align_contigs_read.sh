@@ -9,7 +9,7 @@ conda activate bowtie2
 
 # Define paths
 FASTQ_PATH="/home/marcos/PRJEB59406/cleaned_reads"
-INDEX_PATH="/home/marcos/PRJEB59406/indexed_contings"
+INDEX_PATH="/home/marcos/PRJEB59406/indexed_contigs"
 OUTPUT_PATH="/home/marcos/PRJEB59406/contigs_reads_aligned"
 
 # Create the output directory if it does not exist

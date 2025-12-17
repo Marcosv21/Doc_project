@@ -1,22 +1,46 @@
 #!/bin/bash
-# Dependências: GTDB-Tk
-# Instalação: conda install -c conda-forge -c bioconda gtdbtk
+# Dependencies: GTDB-Tk
+# Installation: conda install -c conda-forge -c bioconda gtdbtk
 
 eval "$(conda shell.bash hook)"
 conda activate gtdbtk
 
-GENOME_DIR=""/home/marcos/PRJEB59406/MetaBAT2_bins/checkm_results""
+# CONFIGURATION
+SOURCE_BINS_DIR="/home/marcos/PRJEB59406/MetaBAT2_bins"
+INPUT_DIR="/home/marcos/PRJEB59406/gtdb_input_all_bins"
 OUTPUT_DIR="/home/marcos/PRJEB59406/taxonomy_gtdb"
 
-export GTDBTK_DATA_PATH="/home/marcos/PRJEB59406/Data_base/gtdbtk_r220_data"
+# Database path
+export GTDBTK_DATA_PATH="/home/marcos/miniconda3/envs/gtdbtk/share/gtdbtk-2.6.1/db"
+
+# STEP 1: PREPARE INPUT
+echo "1. Organizing input files..."
+mkdir -p "$INPUT_DIR"
 mkdir -p "$OUTPUT_DIR"
 
+# Symlink all .fa files to the input directory
+find "$SOURCE_BINS_DIR" -name "*.fa" -exec ln -sf {} "$INPUT_DIR" \;
+
+# Validate file count
+NUM_GENOMES=$(ls "$INPUT_DIR"/*.fa | wc -l)
+echo "Genomes found: $NUM_GENOMES"
+
+if [ "$NUM_GENOMES" -eq 0 ]; then 
+    echo "ERROR: No .fa files found in $SOURCE_BINS_DIR"
+    exit 1
+fi
+
+# STEP 2: RUN GTDB-TK
+echo "2. Running GTDB-Tk classification..."
+
+# Memory optimization: pplacer_cpus=1 and skip_ani_screen
 gtdbtk classify_wf \
-    --genome_dir "$GENOME_DIR" \
+    --genome_dir "$INPUT_DIR" \
     --extension 'fa' \
     --out_dir "$OUTPUT_DIR" \
-    --cpus 24 \
+    --cpus 8 \
     --pplacer_cpus 1 \
+    --skip_ani_screen
 
-
-echo "Finish! The pathway: $OUTPUT_DIR"
+echo "------------------------------------------------"
+echo "Done. Results: $OUTPUT_DIR"

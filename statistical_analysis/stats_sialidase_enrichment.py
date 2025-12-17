@@ -8,18 +8,21 @@ OUTPUT_DIR = "/home/marcos/PRJEB59406/abundance_results/stats"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def clean_name(tax_string):
-    if pd.isna(tax_string): return "Unclassified"
+    if pd.isna(tax_string):
+        return "Unclassified"
     parts = tax_string.split(";")
     for part in parts:
-        if part.startswith("s__"): return part.replace("s__", "").replace("_", " ")
+        if part.startswith("s__"):
+            return part.replace("s__", "").replace("_", " ")
     return "Unknown"
 
 def main():
-    print("1. Carregando dados...")
+    print("1. Loading data...")
     df = pd.read_excel(INPUT_FILE)
     
     df['Species'] = df['classification'].apply(clean_name)
     
+    # Assuming input data uses 'SIM' for Yes
     df['Has_Gene'] = df['tem_sialidase'].apply(lambda x: 1 if x == 'SIM' else 0)
 
     results = []
@@ -27,11 +30,7 @@ def main():
     species_list = df['Species'].value_counts()
     species_to_test = species_list[species_list >= 3].index
 
-    print(f"2. Rodando Teste de Fisher para {len(species_to_test)} espécies...")
-
-    total_mags = len(df)
-    total_with_gene = df['Has_Gene'].sum()
-    total_without_gene = total_mags - total_with_gene
+    print(f"2. Running Fisher's Exact Test for {len(species_to_test)} species...")
 
     for species in species_to_test:
         df_species = df[df['Species'] == species]
@@ -51,7 +50,7 @@ def main():
             'Species': species,
             'Total_MAGs': len(df_species),
             'MAGs_with_Sialidase': n_species_with,
-            'Perc_Positve': (n_species_with / len(df_species)) * 100,
+            'Perc_Positive': (n_species_with / len(df_species)) * 100,
             'P_Value': p_value,
             'Odds_Ratio': odds_ratio
         })
@@ -65,10 +64,10 @@ def main():
         outfile = os.path.join(OUTPUT_DIR, "statistical_sialidase_per_species.tsv")
         df_res.to_csv(outfile, sep="\t", index=False)
         
-        print(df_res[['Species', 'Total_MAGs', 'Perc_Positve', 'P_Adj']].head(5))
-        print(f"\nResultado salvo em: {outfile}")
+        print(df_res[['Species', 'Total_MAGs', 'Perc_Positive', 'P_Adj']].head(5))
+        print(f"\nResults saved to: {outfile}")
     else:
-        print("Not.")
+        print("No results found matching criteria.")
 
 if __name__ == "__main__":
     main()

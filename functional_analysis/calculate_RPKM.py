@@ -11,20 +11,20 @@ try:
     df_counts = pd.read_csv(FILE_COUNTS, sep="\t", index_col="gene_id")
     df_lengths = pd.read_csv(FILE_LENGTHS, sep="\t", index_col="gene_id")
     genes_comuns = df_counts.index.intersection(df_lengths.index)
-    # Filtrar ambos DataFrames para incluir solo genes comunes
+    # Filter between Dataframes to keep only common genes
     df_counts = df_counts.loc[genes_comuns]
     df_lengths = df_lengths.loc[genes_comuns]
-    # Calcular RPKM values 
-    total_reads_per_sample = df_counts.sum(axis=0) # Somar todas as contagens por amostra
-    scaling_factor = total_reads_per_sample / 1_000_000.0 # Calcular fator de escala em milhões de leituras
-    rpm = df_counts.div(scaling_factor, axis=1) # Calcular RPKM
-    lengths_kb = df_lengths['length'] / 1000.0 # Converter comprimentos de genes para kb
+    # RPKM values 
+    total_reads_per_sample = df_counts.sum(axis=0) # Calculate total reads per sample
+    scaling_factor = total_reads_per_sample / 1_000_000.0 # Calculate scaling factor for RPM
+    rpm = df_counts.div(scaling_factor, axis=1) # Calculate RPM values
+    lengths_kb = df_lengths['length'] / 1000.0 # Converting gene lengths to kilobases
     
-    rpkm = rpm.div(lengths_kb, axis=0) # Dividir RPM pelo comprimento do gene em kb
+    rpkm = rpm.div(lengths_kb, axis=0) # Calculate RPKM values
     
-    rpkm = rpkm.fillna(0.0).round(2) # Substituir NaN por 0.0 e arredondar para 2 casas decimais
+    rpkm = rpkm.fillna(0.0).round(2) # Substituition of NaN values with 0.0 and rounding to 2 decimal places
     
-    rpkm.to_csv(FILE_OUTPUT, sep="\t", index_label="gene_id") # Salvar matriz RPKM em arquivo TSV
+    rpkm.to_csv(FILE_OUTPUT, sep="\t", index_label="gene_id") # Save RPKM matrix to output file
     
     print(f"\n Save in: {FILE_OUTPUT}")
 

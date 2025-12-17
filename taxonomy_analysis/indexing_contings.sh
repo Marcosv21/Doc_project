@@ -9,7 +9,7 @@ conda activate bowtie2
 
 # Directories
 MEGAHIT_DIR="/home/marcos/PRJEB59406/megahit_assemblies"
-OUTPUT_DIR="/home/marcos/PRJEB59406/indexed_contings"
+OUTPUT_DIR="/home/marcos/PRJEB59406/indexed_contigs"
 
 # Create the output directory if it doesn't exist
 mkdir -p "$OUTPUT_DIR"
@@ -18,7 +18,7 @@ mkdir -p "$OUTPUT_DIR"
 for CONTIGS_PATH in "$MEGAHIT_DIR"/ERR*; do
     # Get the sample name from the folder name
     SAMPLE=$(basename "$CONTIGS_PATH")
-    CONTIGS_FILE="$CONTIGS_PATH/${SAMPLE}.final.contigs.fa"
+    CONTIGS_FILE="$CONTIGS_PATH/final.contigs.fa"
 
     # Check if the contigs file exists
     if [[ -f "$CONTIGS_FILE" ]]; then

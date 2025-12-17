@@ -5,7 +5,7 @@
 
 #Activate conda environment
 eval "$(conda shell.bash hook)"
-conda activate bowtie2
+conda activate samtools
 
 # Path to the folder containing .sam files
 SAM_DIR="/home/marcos/PRJEB59406/contigs_reads_aligned"

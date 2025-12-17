@@ -3,7 +3,7 @@
 # Instalação: conda install prodigal diamond
 
 eval "$(conda shell.bash hook)"
-conda activate diamond  # Ou o ambiente onde diamond e prodigal estão
+conda activate diamond  # At the moment diamond and prodigal are in the same environment
 
 MAGS_DIR="/home/marcos/PRJEB59406/metabat2_bins/final_bins"
 
@@ -32,8 +32,7 @@ for MAG in "$MAGS_DIR"/*.fa; do
                    --mid-sensitive \
                    --quiet
 
-    # 3. Verificação Rápida
-    # Se o arquivo de saída não estiver vazio (tiver hits), avisa na tela!
+    # 3. Verification of hits
     if [ -s "$DIAMOND_OUT/${BIN_NAME}_hits_sial.tsv" ]; then
         echo " Found sialidase in $BIN_NAME!"
     fi
