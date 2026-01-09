@@ -29,7 +29,7 @@ for MAG in "$MAGS_DIR"/*.fa; do
                    -q "$PROTEINS_DIR/${BIN_NAME}.faa" \
                    -o "$DIAMOND_OUT/${BIN_NAME}_hits_sial.tsv" \
                    --outfmt 6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore \
-                   --mid-sensitive \
+                   --sensitive \
                    --quiet
 
     # 3. Verification of hits
