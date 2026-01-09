@@ -1,55 +1,48 @@
 #!/bin/bash
+# Automates CheckM lineage_wf and qa for MetaBAT2 bins
 
-# Dependencies: CheckM
-# Install: conda create -n checkm -c bioconda checkm-genome
-
-# Activate conda environment
+# Activate Conda
 eval "$(conda shell.bash hook)"
 conda activate checkm
 
-# Base path containing MetaBAT2 bins
+# Paths
 BASE_DIR="/home/marcos/PRJEB59406/MetaBAT2_bins"
-
-# Output directory
 OUT_BASE="/home/marcos/PRJEB59406/checkm_results"
 mkdir -p "$OUT_BASE"
 
-echo "Starting CheckM..."
+echo "Starting CheckM Pipeline..."
 
-# Loop through sample directories (ERR...)
+# Iterate through samples
 for SAMPLE_PATH in "$BASE_DIR"/ERR*; do
-    if [ -d "$SAMPLE_PATH" ]; then
-        SAMPLE_NAME=$(basename "$SAMPLE_PATH")
+    # Skip if not a directory
+    [ -d "$SAMPLE_PATH" ] || continue
+    
+    SAMPLE_NAME=$(basename "$SAMPLE_PATH")
+    
+    # Find the specific bins subdirectory
+    BIN_SUBDIR=$(find "$SAMPLE_PATH" -maxdepth 1 -type d -name "*metabat-bins*" | head -n 1)
+
+    # Check if directory exists and contains .fa files
+    if [ -n "$BIN_SUBDIR" ] && ls "$BIN_SUBDIR"/*.fa 1> /dev/null 2>&1; then
+        echo "Processing Sample: $SAMPLE_NAME"
         
-        # Find the subdirectory containing "metabat-bins"
-        BIN_SUBDIR=$(find "$SAMPLE_PATH" -maxdepth 1 -type d -name "*metabat-bins*" | head -n 1)
+        OUT_DIR="$OUT_BASE/$SAMPLE_NAME"
+        mkdir -p "$OUT_DIR"
 
-        if [ -n "$BIN_SUBDIR" ] && [ -d "$BIN_SUBDIR" ]; then
-            
-            # Count how many .fa files exist INSIDE the subdirectory
-            count_bins=$(ls "$BIN_SUBDIR"/*.fa 2>/dev/null | wc -l)
-            
-            if [ "$count_bins" -gt 0 ]; then
-                echo "------------------------------------------------"
-                echo "Sample: $SAMPLE_NAME"
-                echo "Bins folder found: $(basename "$BIN_SUBDIR")"
-                echo "Number of bins: $count_bins"
-                
-                # Define specific output directory
-                OUT_DIR="$OUT_BASE/$SAMPLE_NAME"
-                mkdir -p "$OUT_DIR"
+        # 1. Run Main Workflow
+        checkm lineage_wf -t 4 --pplacer_threads 1 -x fa "$BIN_SUBDIR" "$OUT_DIR"
 
-                # Run CheckM pointing to the correct SUBDIRECTORY
-                # -x fa: MetaBAT2 generates .fa files by default
-                checkm lineage_wf -t 4 --pplacer_threads 1 -x fa "$BIN_SUBDIR" "$OUT_DIR"
-                
-            else
-                echo "WARNING: MetaBAT folder exists for $SAMPLE_NAME, but is empty (0 bins)."
-            fi
+        # 2. Generate QA Reports (Txt and Tsv)
+        if [ -f "$OUT_DIR/lineage.ms" ]; then
+            checkm qa "$OUT_DIR/lineage.ms" "$OUT_DIR" > "$OUT_DIR/quality_report.txt"
+            checkm qa "$OUT_DIR/lineage.ms" "$OUT_DIR" --tab_table -f "$OUT_DIR/quality_table.tsv"
+            echo "  > Quality reports saved."
         else
-            echo "ERROR: Could not find 'metabat-bins' subdirectory inside $SAMPLE_NAME"
+            echo "  > Error: Lineage workflow failed."
         fi
+    else
+        echo "Skipping $SAMPLE_NAME: No bins found."
     fi
 done
 
-echo "CheckM finished."
+echo "Pipeline finished."
