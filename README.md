@@ -5,7 +5,7 @@ FLASH tools: For calculating the parameters -m (minimum) and -M (maximum), use O
 
 Execution order: 
 - Preparation
-- pre-analysis: fastp.sh -> align_reads_human_genome_Bowtie2.sh -> Remove_human_genome_Bowtie2.sh -> flash.sh -> megahit.sh.
+- cleaned_and_assembled: fastp.sh -> align_reads_human_genome_Bowtie2.sh -> Remove_human_genome_Bowtie2.sh -> flash.sh -> megahit.sh.
 - functional_analysis: prtodigal_script.sh -> script_diamond.sh -> filtering_diamond.sh -> extract_filtered_fna.py -> indexing_fna.sh -> allign_fna_bowtie2.sh -> samtools_idxstats.sh -> merge_counts.py -> calculate_tpm.py -> plot_heatmap.py
 - 
 - statistical_analysis
