@@ -4,7 +4,22 @@ ssh -X -2 -L 8020:aguia4:22 17404478@shark.hpc.usp.br
 #janela 2:
 #Para transferências servidor --> meu linux:
 scp -r -P 8020 -i ./id_ed25519  17404478@localhost:/temporario2/17404478/PRJEB59406/fastp_quality . #ponto no final indica q os arquivos serão copiados p/ diretorio atual (onde vc esta)
+scp -r -P 8020 -i ./id_ed25519  17404478@localhost:/temporario2/17404478/PRJEB59406/abundance_results/heatmap_groups_clean.png .
+
 #Para transferências meu linux --> servidor:
 scp -r -P 8020 -i ./id_ed25519 ./pasta_ou_arquivo_a_ser_transferido/ 17404478@localhost:/temporario2/17404478/PRJEB59406
 
+#Para transferências entre servidores, fazer o mesmo processo de dentro do servidor que se conectará ao aguia4
+
+Caso não dê certo, use o shark
+
+#Para enviar do pc local para o shark:
+scp -P 8020 -i ./id_ed25519 sample_map.csv 17404478@shark:/temporario2/17404478/
+#Para enviar do shark para o servidor aguia4:
+scp sample_map.csv 17404478@aguia4:/temporario2/17404478/PRJEB59406/
+#Para baixar do aguia4 para o shark:
+scp 17404478@aguia4:/temporario2/17404478/PRJEB59406/abundance_results/heatmap_groups_clean.png .
+#Para baixar do shark para o pc local:
+scp -P 8020 -i ./id_ed25519 17404478@shark:/temporario2/17404478/heatmap_groups_clean.png .
+#Lembre-se de apagar o arquivo do shark depois, para não ocupar espaço desnecessário
 #Para transferências entre servidores, fazer o mesmo processo de dentro do servidor que se conectará ao aguia4

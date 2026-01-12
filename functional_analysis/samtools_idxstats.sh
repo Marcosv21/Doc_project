@@ -9,7 +9,7 @@ INPUT_DIR="/home/marcos/PRJEB59406/fna_reads_aligned"
 STATS_DIR="/home/marcos/PRJEB59406/idxstats"
 
 mkdir -p "$STATS_DIR"
-
+# Loop through SAM files
 for SAM_FILE in "$INPUT_DIR"/*.sam; do
     
     [ -e "$SAM_FILE" ] || continue
@@ -18,10 +18,12 @@ for SAM_FILE in "$INPUT_DIR"/*.sam; do
     BAM_FILE="${INPUT_DIR}/${BASENAME}_sorted.bam"
     
     echo "Processing: $BASENAME"
-
+# Convert SAM to sorted BAM if not already done
     if [ ! -f "$BAM_FILE" ]; then
         echo "Converting and orderind BAM..."
         samtools sort -@ 8 -o "$BAM_FILE" "$SAM_FILE"
+    # @: number of threads
+    # o: output file
     else
         echo "  -> BAM order existing yet."
     fi
@@ -40,4 +42,4 @@ for SAM_FILE in "$INPUT_DIR"/*.sam; do
 
 done
 
-echo "Well done! Statistical base save in: $STATS_DIR"
+echo "Statistical base save in: $STATS_DIR"

@@ -16,3 +16,4 @@ sbatch  _name your script.sh
 
 sbatch script_name.sh --dependency=afterany:id_job
 
+/temporario2/17404478/PRJEB59406/filas_processamento/fila_1/megahit_assemblies"

@@ -30,5 +30,7 @@ echo "Finished!"
 #  diamond blastp -d "$db" \ Define Diamond database path
 #                   -q "$query" \ Define query file
 #                   -o "$output" \ Define output file
-#                   --mid-sensitive \ Use mid-sensitive mode (balances speed and sensitivity)
-#                   --outfmt 6 (Define format of the outpu, number 6 equal BLAST tabular format) qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen \ Define output format (tabular with specific fields)
+#                   --mid-sensitive \ Use mid-sensitive mode (balances speed and sensitivity), 
+#                     but can be adjusted based on needs, for example --sensitive for more sensitivity or --fast for speed or --more-sensitive for more sensitivity
+#                   --outfmt 6 (Define format of the outpu, number 6 equal BLAST tabular format) qseqid sseqid pident 
+#                     length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen \ Define output format (tabular with specific fields)

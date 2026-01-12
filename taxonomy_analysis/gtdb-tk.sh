@@ -33,7 +33,8 @@ fi
 # STEP 2: RUN GTDB-TK
 echo "2. Running GTDB-Tk classification..."
 
-# Memory optimization: pplacer_cpus=1 and skip_ani_screen
+# Memory optimization: pplacer_cpus=1 and skip_ani_screen to reduce RAM usage
+# Run the classification workflow
 gtdbtk classify_wf \
     --genome_dir "$INPUT_DIR" \
     --extension 'fa' \
@@ -41,6 +42,11 @@ gtdbtk classify_wf \
     --cpus 8 \
     --pplacer_cpus 1 \
     --skip_ani_screen
-
+# genome_dir: Directory with input genomes
+# extension: File extension of genome files
+# out_dir: Output directory
+# cpus: Number of CPUs to use
+# pplacer_cpus: Number of CPUs for pplacer (set to 1 for lower RAM usage)
+# skip_ani_screen: Skip ANI screening to save memory    
 echo "------------------------------------------------"
 echo "Done. Results: $OUTPUT_DIR"

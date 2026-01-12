@@ -29,6 +29,11 @@ for FILE1 in $FASTQ_PATH/*_1.fastq.gz; do
     -2 $FILE2 \
     --threads 8 \
     -S $OUTPUT_PATH/${BASENAME}_aligned.sam
+  # -x: path to the genome index
+  # -1: input read1
+  # -2: input read2
+  # --threads: number of threads
+  # -S: output SAM file
 
 done
 

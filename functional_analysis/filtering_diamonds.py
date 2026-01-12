@@ -16,7 +16,7 @@ document = glob.glob(os.path.join(INPUT_DIR, "*.tsv"))
 for arc in document: 
     base_name = os.path.basename(document) 
     print(f"-> Processing: {base_name}") 
-    
+# Read the TSV file into a DataFrame    
     try: 
         df = pd.read_csv(arc, sep="\t", names=columns, header=None, 
                          usecols=range(14), low_memory=False) 
@@ -31,7 +31,7 @@ for arc in document:
         # Verify if DataFrame is empty after dropping NaNs
         if len(df) == 0: 
             continue 
-
+# Calculate additional filtering metrics 
         df['cobertura'] = df['length'] / df['qlen'] 
         df['qlen/slen'] = df['qlen'] / df['slen'] 
 # Apply filtering criteria
@@ -43,9 +43,9 @@ for arc in document:
             (df['qlen/slen'] <= 1.5) &
             (df['bitscore'] >= 50)
         )
-        
+        # Create the final filtered DataFrame
         final_df = df[filter] 
-
+# Save the filtered DataFrame to the output directory
         output_pat = os.path.join(OUTPUT_DIR, base_name) 
         final_df.to_csv(output_pat, sep="\t", index=False) 
 # Indicate complete d processing

@@ -30,6 +30,9 @@ for SAM_FILE in "$INPUT_DIR"/*.sam; do
 
   # Convert BAM to FASTQ
   samtools fastq -@ 8 -1 "$OUTPUT_DIR/${BASENAME}_R1.fastq" -2 "$OUTPUT_DIR/${BASENAME}_R2.fastq" "$OUTPUT_DIR/${BASENAME}_filtered.bam"
+  # -1: output read1
+  # -2: output read2
+  # -@ 8: number of threads
   
   echo " ${BASENAME}_R1.fastq and ${BASENAME}_R2.fastq creates."
 

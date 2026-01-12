@@ -28,7 +28,7 @@ for SAMPLE_PATH in "$BASE_DIR"/ERR*; do
             
             # Count how many .fa files exist INSIDE the subdirectory
             count_bins=$(ls "$BIN_SUBDIR"/*.fa 2>/dev/null | wc -l)
-            
+            # Proceed only if there are bins present
             if [ "$count_bins" -gt 0 ]; then
                 echo "------------------------------------------------"
                 echo "Sample: $SAMPLE_NAME"
@@ -41,6 +41,8 @@ for SAMPLE_PATH in "$BASE_DIR"/ERR*; do
 
                 # Run CheckM pointing to the correct SUBDIRECTORY
                 # -x fa: MetaBAT2 generates .fa files by default
+                # Using 4 threads for analysis and 1 thread for pplacer
+                # Adjust threads as needed based on your system capabilities
                 checkm lineage_wf -t 4 --pplacer_threads 1 -x fa "$BIN_SUBDIR" "$OUT_DIR"
                 
             else

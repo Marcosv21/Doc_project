@@ -5,11 +5,11 @@
 
 #Activate the Conda environment (if needed)
 eval "$(conda shell.bash hook)"
-conda activate bowtie2
+conda activate Bowtie2
 
 # Directories
-MEGAHIT_DIR="/home/marcos/PRJEB59406/megahit_assemblies"
-OUTPUT_DIR="/home/marcos/PRJEB59406/indexed_contigs"
+MEGAHIT_DIR="/temporario2/17404478/PRJEB59406/filas_processamento/fila_1/megahit_assemblies"
+OUTPUT_DIR="/temporario2/17404478/PRJEB59406/filas_processamento/fila_1/indexed_contigs"
 
 # Create the output directory if it doesn't exist
 mkdir -p "$OUTPUT_DIR"

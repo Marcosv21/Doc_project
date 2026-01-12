@@ -31,8 +31,14 @@ for MAG in "$MAGS_DIR"/*.fa; do
                    --outfmt 6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore \
                    --mid-sensitive \
                    --quiet
+                   # -d: Defining Diamond database path
+                   # -q: Defining query file
+                   # -o: Defining output file
+                   # --outfmt 6: Define output format (tabular with specific fields)
+                   # --mid-sensitive: Use mid-sensitive mode (balances speed and sensitivity)
+                   # --quiet: Suppress standard output messages
 
-    # 3. Verification of hits
+    # Verification of hits
     if [ -s "$DIAMOND_OUT/${BIN_NAME}_hits_sial.tsv" ]; then
         echo " Found sialidase in $BIN_NAME!"
     fi

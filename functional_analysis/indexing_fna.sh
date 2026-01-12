@@ -18,9 +18,9 @@ mkdir -p "$OUTPUT_DIR"
 for FNA_FILE in "$PRODIGAL_DIR"/*.fna; do
         SAMPLE=$(basename "$FNA_FILE" .fna)
 
-        # Index the contigs
+        # Index the contigs file using Bowtie2 
         bowtie2-build "$FNA_FILE" "$OUTPUT_DIR/${SAMPLE}_fna_indexed"
-
+        
         # Check if the command was successful
         if [[ $? -eq 0 ]]; then
             echo "Indexing completed for $SAMPLE."

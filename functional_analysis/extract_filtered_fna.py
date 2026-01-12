@@ -1,52 +1,53 @@
+# Do you need to install Biopython? If so, run: pip install biopython pandas
 import pandas as pd
 from Bio import SeqIO
 import glob
 import os
 
 # Define directories
-DIR_TSV_FILTRADO = "/home/marcos/PRJEB59406/diamond_results_filtrados"
-DIR_ORIGINAL_FASTA = "/home/marcos/PRJEB59406/prodigal_outputs"
+DIR_TSV_FILTRED = "/home/marcos/PRJEB59406/diamond_results_filtrados"
+DIR_FASTA = "/home/marcos/PRJEB59406/prodigal_outputs"
 DIR_OUTPUT = "/home/marcos/PRJEB59406/filtered_fna"
 os.makedirs(DIR_OUTPUT, exist_ok=True)
 # Get list of filtered TSV files
-arquivos_tsv = glob.glob(os.path.join(DIR_TSV_FILTRADO, "*.tsv"))
+tsv_archives = glob.glob(os.path.join(DIR_TSV_FILTRED, "*.tsv"))
 # Process each TSV file
-for arquivo_tsv in arquivos_tsv: 
+for tsv_files in tsv_archives: 
     try: 
-        nome_base_tsv = os.path.basename(arquivo_tsv) 
-        
-        if "_matches.tsv" in nome_base_tsv:
-            sample_name = nome_base_tsv.replace("_matches.tsv", "") 
+        base_name_tsv = os.path.basename(tsv_files) 
+        # Extract sample name
+        if "_matches.tsv" in base_name_tsv:
+            sample_name = base_name_tsv.replace("_matches.tsv", "") 
         else: 
-            sample_name = os.path.splitext(nome_base_tsv)[0]
+            sample_name = os.path.splitext(base_name_tsv)[0]
 
         print(f"------------------------------------------------")
         print(f"Sample: {sample_name}")
-
-        arquivo_fna_origem = os.path.join(DIR_ORIGINAL_FASTA, f"{sample_name}.fna") 
-        arquivo_fna_destino = os.path.join(DIR_OUTPUT, f"{sample_name}_filtered.fna") 
-        if not os.path.exists(arquivo_fna_origem):
+# Define paths for original and destination FNA files
+        fna_arc_org = os.path.join(DIR_FASTA, f"{sample_name}.fna") 
+        dest_fna_arc = os.path.join(DIR_OUTPUT, f"{sample_name}_filtered.fna") 
+        if not os.path.exists(fna_arc_org):
             continue
-        df = pd.read_csv(arquivo_tsv, sep='\t') 
-        ids_alvo = set(df['seqid'].astype(str))
+        df = pd.read_csv(tsv_files, sep='\t') 
+        target_id = set(df['seqid'].astype(str))
         
-        print(f"genes: {len(ids_alvo)}")
-        if len(ids_alvo) == 0:
+        print(f"genes: {len(target_id)}")
+        if len(target_id) == 0:
             continue
-
-        sequencias_salvas = []
-        
-        for record in SeqIO.parse(arquivo_fna_origem, "fasta"): 
+# Extract and save filtered sequences 
+        saves_sequence = []
+        # Read original FNA and filter sequences 
+        for record in SeqIO.parse(dest_fna_arc, "fasta"): 
             id_fasta = record.id.split()[0] 
-            
-            if id_fasta in ids_alvo: 
-                sequencias_salvas.append(record) 
-
-        if sequencias_salvas: 
-            SeqIO.write(sequencias_salvas, arquivo_fna_destino, "fasta") 
+            # Check if the sequence ID is in the target IDs
+            if id_fasta in target_id: 
+                saves_sequence.append(record) 
+# Write filtered sequences to new FNA file 
+        if saves_sequence: 
+            SeqIO.write(saves_sequence, dest_fna_arc, "fasta") 
         else:
             print("-> ERROR: Sequence not found. Check the ID in TSV if matches of FNA.")
-
+# Error handling 
     except Exception as e: 
         print(f"ERROR {sample_name}: {e}")
 

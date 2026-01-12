@@ -31,6 +31,11 @@ for FILE1 in "$FASTQ_PATH"/*_filtered_aligned_R1.fastq; do
       -2 "$FILE2" \
       --threads 8 \
       -S "$OUTPUT_PATH/${BASENAME}_aligned_fna.sam"
+      # -x: path to the genome index
+      # -1: input read1
+      # -2: input read2
+      # --threads: number of threads
+      # -S: output SAM file
   else
     echo "Warning: Missing pair for $BASENAME. Skipping alignment."
   fi

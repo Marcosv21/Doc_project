@@ -9,7 +9,7 @@ echo "activate env megahit..."
 conda activate megahit
 
 FASTQ_PATH="/temporario2/17404478/PRJEB59406/cleaned_reads" 
-MERGED_PATH="/temporario2/17404478/PRJEB59406//merged_reads" 
+MERGED_PATH="/temporario2/17404478/PRJEB59406/merged_reads" 
 OUTPUT_PATH="/temporario2/17404478/PRJEB59406/megahit_assemblies"
 
 mkdir -p "$OUTPUT_PATH"
@@ -41,4 +41,10 @@ for FILE1 in "$FASTQ_PATH"/*_R1.fastq; do
   fi
   #Assembling with MEGAHIT
   megahit -1 "$FILE1" -2 "$FILE2" -r "$FILE3" -o "$OUTPUT_PATH/${BASENAME}" -m 0.8 -t 20
+  # -1: input read1
+  # -2: input read2
+  # -r: input merged reads
+  # -o: output directory
+  # -m: maximum memory usage (0.8 = 80% of available memory)
+  # -t: number of threads
 done
