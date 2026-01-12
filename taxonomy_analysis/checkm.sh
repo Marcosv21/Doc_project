@@ -22,6 +22,20 @@ for SAMPLE_PATH in "$BASE_DIR"/ERR*; do
     # Find the specific bins subdirectory
     BIN_SUBDIR=$(find "$SAMPLE_PATH" -maxdepth 1 -type d -name "*metabat-bins*" | head -n 1)
 
+        if [ -n "$BIN_SUBDIR" ] && [ -d "$BIN_SUBDIR" ]; then
+            
+            # Count how many .fa files exist INSIDE the subdirectory
+            count_bins=$(ls "$BIN_SUBDIR"/*.fa 2>/dev/null | wc -l)
+            # Proceed only if there are bins present
+            if [ "$count_bins" -gt 0 ]; then
+                echo "------------------------------------------------"
+                echo "Sample: $SAMPLE_NAME"
+                echo "Bins folder found: $(basename "$BIN_SUBDIR")"
+                echo "Number of bins: $count_bins"
+                
+                # Define specific output directory
+                OUT_DIR="$OUT_BASE/$SAMPLE_NAME"
+                mkdir -p "$OUT_DIR"
     # Check if directory exists and contains .fa files
     if [ -n "$BIN_SUBDIR" ] && ls "$BIN_SUBDIR"/*.fa 1> /dev/null 2>&1; then
         echo "Processing Sample: $SAMPLE_NAME"
@@ -29,6 +43,15 @@ for SAMPLE_PATH in "$BASE_DIR"/ERR*; do
         OUT_DIR="$OUT_BASE/$SAMPLE_NAME"
         mkdir -p "$OUT_DIR"
 
+                # Run CheckM pointing to the correct SUBDIRECTORY
+                # -x fa: MetaBAT2 generates .fa files by default
+                # Using 4 threads for analysis and 1 thread for pplacer
+                # Adjust threads as needed based on your system capabilities
+                checkm lineage_wf -t 4 --pplacer_threads 1 -x fa "$BIN_SUBDIR" "$OUT_DIR"
+                
+            else
+                echo "WARNING: MetaBAT folder exists for $SAMPLE_NAME, but is empty (0 bins)."
+            fi
         # 1. Run Main Workflow
         checkm lineage_wf -t 4 --pplacer_threads 1 -x fa "$BIN_SUBDIR" "$OUT_DIR"
 
