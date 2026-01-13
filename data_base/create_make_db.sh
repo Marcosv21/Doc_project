@@ -5,20 +5,20 @@
 eval "$(conda shell.bash hook)"
 conda activate diamond
 
-INPUT_DIR="/home/marcos/PRJEB59406/Data_base/FASTA/sialidase_families"
+INPUT_DIR="/home/marcos/PRJEB59406/data_base1"
 
-OUTPUT_DIR="/home/marcos/PRJEB59406/Data_base/diamond_db"
+OUTPUT_DIR="/home/marcos/PRJEB59406/data_base1/diamond_db"
 mkdir -p "$OUTPUT_DIR"
 
 echo "Starting header modification and database creation..."
 
-for file in "$INPUT_DIR"/nr_*.fasta; do
+for file in "$INPUT_DIR"/*.fasta; do
     
     [ -e "$file" ] || continue
 
     filename=$(basename "$file" .fasta)
     
-    family=${filename#nr_}
+    family=${nr_}
 
     mod_file="$OUTPUT_DIR/mod_${family}.fasta"
 

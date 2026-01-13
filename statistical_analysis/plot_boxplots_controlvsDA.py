@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-BASE_DIR = "/home/marcos/PRJEB59406"
+BASE_DIR = "/temporario2/17404478/PRJEB59406"
 FILE_SAMPLE_MAP = f"{BASE_DIR}/sample_map.csv"
 OUTPUT_DIR = f"{BASE_DIR}/abundance_results/plots_comparativos"
 os.makedirs(OUTPUT_DIR, exist_ok=True)

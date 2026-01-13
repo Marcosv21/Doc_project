@@ -1,14 +1,18 @@
-#!/bin/bash  -v
+#!/bin/bash 
 
-#SBATCH --job-name=kegg_1
+#SBATCH --job-name=
 #SBATCH --partition=SP2
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=20
-#SBATCH --mem-per-cpu=24000
+#SBATCH --cpus-per-task=10
+#SBATCH --mem-per-cpu=10000
 #SBATCH --time=24:00:00
 #SBATCH --mail-type=BEGIN
 #SBATCH --mail-type=END
 #SBATCH --mail-user=marcosvc@usp.br
+
+python3 << 'EOF'
+
+EOF
 
 #Paste your code below this line:
 #In command line run the application:
@@ -16,4 +20,3 @@ sbatch  _name your script.sh
 
 sbatch script_name.sh --dependency=afterany:id_job
 
-/temporario2/17404478/PRJEB59406/filas_processamento/fila_1/megahit_assemblies"

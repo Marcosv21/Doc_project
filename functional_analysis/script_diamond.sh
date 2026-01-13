@@ -6,22 +6,22 @@
 eval "$(conda shell.bash hook)"
 conda activate diamond
 # Define working directory
-dir="/temporario2/17404478/PRJEB59406/prodigal_outputs"
+dir="/home/marcos/PRJEB59406/prodigal_outputs"
 #define output directory
-out_dir="/temporario2/17404478/PRJEB59406/diamond_results"
+out_dir="/home/marcos/PRJEB59406/diamond_results"
 mkdir -p "$out_dir"
 # Define Diamond database path
-db="/temporario2/17404478/PRJEB59406/Data_base/diamond_db_named/all_sequences_named.dmnd"  # DIAMOND database
+db="/home/marcos/PRJEB59406/data_base1/diamond_db/all_sequences.dmnd"  # DIAMOND database
 
 # Loop to process all .faa files in the directory
 for query in $dir/*.faa; do
     filename=$(basename "$query" .faa)
     output="${out_dir}/${filename}_matches.tsv"  # Output file name
     echo "Running DIAMOND for $query..."
-    diamond blastp -d "$db" \ 
+    diamond blastp -d "$db" \
                    -q "$query" \
                    -o "$output" \
-                   --mid-sensitive \
+                   --more-sensitive \
                    --outfmt 6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen \
 
 done

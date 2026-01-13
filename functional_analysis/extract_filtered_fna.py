@@ -37,7 +37,7 @@ for tsv_files in tsv_archives:
 # Extract and save filtered sequences 
         saves_sequence = []
         # Read original FNA and filter sequences 
-        for record in SeqIO.parse(dest_fna_arc, "fasta"): 
+        for record in SeqIO.parse(fna_arc_org, "fasta"): 
             id_fasta = record.id.split()[0] 
             # Check if the sequence ID is in the target IDs
             if id_fasta in target_id: 
