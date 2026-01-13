@@ -7,6 +7,9 @@ Execution order:
 - Preparation
 - pre-analysis: fastp.sh -> align_reads_human_genome_Bowtie2.sh -> Remove_human_genome_Bowtie2.sh -> flash.sh -> megahit.sh.
 - functional_analysis: prtodigal_script.sh -> script_diamond.sh -> filtering_diamond.sh -> extract_filtered_fna.py -> indexing_fna.sh -> allign_fna_bowtie2.sh -> Joinning_idxst.py.
+<<<<<<< HEAD
 >>>>>>> 75dee45 (Refactor code structure for improved readability and maintainability)
 - 
+=======
+>>>>>>> 1f4889c (Remove empty line in execution order section of README.md)
 - statistical_analysis
