@@ -115,7 +115,7 @@ if os.path.exists(SAMPLE_MAP):
         # Final Merge
         df_final_grouped = final_df.merge(df_clean_map, on='Sample', how='left')
         df_final_grouped.to_csv(FINAL_FILE, sep='\t', index=False)
-        print(f"✅ Final table with groups saved: {FINAL_FILE}")
+        print(f"Final table with groups saved: {FINAL_FILE}")
         
     except Exception as e:
         print(f"   [Error] Processing sample map: {e}")
