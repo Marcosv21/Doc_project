@@ -5,14 +5,15 @@
 eval "$(conda shell.bash hook)"
 conda activate diamond  # At the moment diamond and prodigal are in the same environment
 
-MAGS_DIR="/temporario2/17404478/PRJEB59406/filas_processamento/fila_1/filtered_bins_high_quality"
+MAGS_DIR="/home/marcos/PRJEB59406/filtered_bins_high_quality"
 
-OUTPUT_DIR="/temporario2/17404478/PRJEB59406/filas_processamento/fila_1/mag_annotation"
+OUTPUT_DIR="/home/marcos/PRJEB59406/mag_annotation"
 PROTEINS_DIR="$OUTPUT_DIR/proteins"
 DIAMOND_OUT="$OUTPUT_DIR/diamond_matches"
 
-DB_PATH="/temporario2/17404478/PRJEB59406/code/data_base/diamond_db/all_sequences.dmnd"
+DB_PATH="/home/marcos/PRJEB59406/data_base1/diamond_db/all_sequences.dmnd"
 
+mkdir -p "$OUTPUT_DIR"
 mkdir -p "$PROTEINS_DIR"
 mkdir -p "$DIAMOND_OUT"
 

@@ -2,9 +2,9 @@ import os
 import pandas as pd
 
 # --- PATH CONFIGURATION ---
-BASE_DIR = "/temporario2/17404478/PRJEB59406"
-IDXSTATS_DIR = f"{BASE_DIR}/filas_processamento/fila_*/idxstats"
-DIAMOND_DIR = f"{BASE_DIR}/filas_processamento/fila_*/diamond_results_filtrados"
+BASE_DIR = "/home/marcos/PRJEB59406/compactados"
+IDXSTATS_DIR = f"{BASE_DIR}/idxstats"
+DIAMOND_DIR = f"{BASE_DIR}/diamond_results_filtrados"
 OUTPUT_DIR = f"{BASE_DIR}/abundance_results"
 SAMPLE_MAP = f"{BASE_DIR}/sample_map.csv"
 
