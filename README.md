@@ -28,11 +28,11 @@ To calculate the parameters `-m` (minimum) and `-M` (maximum), use the following
 
 ```mermaid
 graph TD
-    %% Node Styles
-    classDef shell fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    classDef python fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
-    classDef ipynb fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
-    classDef start fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,stroke-dasharray: 5 5;
+    %% Node Styles - Adicionei "color:#000000" para texto preto
+    classDef shell fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000000;
+    classDef python fill:#fff9c4,stroke:#fbc02d,stroke-width:2px,color:#000000;
+    classDef ipynb fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#000000;
+    classDef start fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,stroke-dasharray: 5 5,color:#000000;
 
     %% Start Node
     Input(Raw FASTQ Data):::start --> Clean1
@@ -83,7 +83,7 @@ graph TD
         %% Taxonomy result -> plots_taxonomy.ipynb
         Tax9 --> Stat2(plots_taxonomy.ipynb):::ipynb
     end
-    
+
 ```
 
 ### 1. Preparation
