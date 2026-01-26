@@ -1,4 +1,4 @@
-# Ph.D. Project: Sialic Acid Cross-feeding
+# Ph.D. Project
 
 **Title:** Investigation of the cross-feeding mechanism of sialic acids between *Staphylococcus aureus* and commensal bacteria in the context of atopic dermatitis.
 
@@ -25,8 +25,10 @@ To calculate the parameters `-m` (minimum) and `-M` (maximum), use the following
     * Use the value indicated at the **Peak**.
 
 ## Execution Order
+
+```mermaid
 graph TD
-    %% Node Styles (Colors to differentiate file types)
+    %% Node Styles
     classDef shell fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
     classDef python fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
     classDef ipynb fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
@@ -35,8 +37,8 @@ graph TD
     %% Start Node
     Input(Raw FASTQ Data):::start --> Clean1
 
-    %% Group 2: Cleaning and Assembly
-    subgraph Cleaning ["2. Cleaning & Assembly"]
+    %% --- 1. CLEANING & ASSEMBLY ---
+    subgraph Cleaning ["1. Cleaning & Assembly"]
         direction TB
         Clean1[fastp.sh]:::shell --> Clean2[align_reads_human_genome_Bowtie2.sh]:::shell
         Clean2 --> Clean3[Remove_human_genome_Bowtie2.sh]:::shell
@@ -44,10 +46,24 @@ graph TD
         Clean4 --> Clean5[megahit.sh]:::shell
     end
 
-    %% Connection between groups
+    %% Fork: Assembly output goes to BOTH Functional and Taxonomy
     Clean5 --> Func1
+    Clean5 --> Tax1
 
-    %% Group 3: Functional Analysis
+    %% --- 2. TAXONOMY ANALYSIS ---
+    subgraph Taxonomy ["2. Taxonomy Analysis"]
+        direction TB
+        Tax1[indexing_contigs.sh]:::shell --> Tax2[align_contigs_read.sh]:::shell
+        Tax2 --> Tax3[ordering_bam.sh]:::shell
+        Tax3 --> Tax4[metabat2.sh]:::shell
+        Tax4 --> Tax5[checkm.sh]:::shell
+        Tax5 --> Tax6[filtered_checkm.py]:::python
+        Tax6 --> Tax7[gtdb-tk.sh]:::shell
+        Tax7 --> Tax8[mag_functional_screening.sh]:::shell
+        Tax8 --> Tax9[create_master_table.py]:::python
+    end
+
+    %% --- 3. FUNCTIONAL ANALYSIS ---
     subgraph Functional ["3. Functional Analysis"]
         direction TB
         Func1[prodigal_script.sh]:::shell --> Func2[script_diamond.sh]:::shell
@@ -58,38 +74,59 @@ graph TD
         Func6 --> Func7[Joinning_idxst.py]:::python
     end
 
-    %% Connection between groups
-    Func7 --> Stat1
-    Func7 --> Stat2
-
-    %% Group 4: Statistical Analysis
+    %% --- 4. STATISTICAL ANALYSIS ---
     subgraph Stats ["4. Statistical Analysis"]
         direction TB
-        Stat1(plots.ipynb):::ipynb
-        Stat2(plots_taxonomy.ipynb):::ipynb
+        %% Functional result -> plots.ipynb
+        Func7 --> Stat1(plots.ipynb):::ipynb
+        
+        %% Taxonomy result -> plots_taxonomy.ipynb
+        Tax9 --> Stat2(plots_taxonomy.ipynb):::ipynb
     end
+    
+```
 
 ### 1. Preparation
+
 *(Initial data setup)*
 
 ### 2. Cleaning and Assembly
+
 The pipeline follows this specific sequence:
-1.  `fastp.sh` (Quality Control)
-2.  `align_reads_human_genome_Bowtie2.sh` (Host Alignment)
-3.  `Remove_human_genome_Bowtie2.sh` (Decontamination)
-4.  `flash.sh` (Merge Paired-end Reads)
-5.  `megahit.sh` (Assembly)
 
-### 3. Functional Analysis
-1.  `prodigal_script.sh` (Gene Prediction)
-2.  `script_diamond.sh` (Protein Alignment)
-3.  `filtering_diamond.sh` (Quality Filtering)
-4.  `extract_filtered_fna.py` (Sequence Extraction)
-5.  `indexing_fna.sh` (Index Building)
-6.  `allign_fna_bowtie2.sh` (Alignment)
-7.  `Joinning_idxst.py` (Statistical Merging)
+1. `fastp.sh` (Quality Control)
+2. `align_reads_human_genome_Bowtie2.sh` (Host Alignment)
+3. `Remove_human_genome_Bowtie2.sh` (Decontamination)
+4. `flash.sh` (Merge Paired-end Reads)
+5. `megahit.sh` (Assembly)
 
-### 4. Statistical Analysis
-1. `plots.ipynb`
-2. `plots_taxonomy.ipynb`
+### 3. Taxonomy Analysis
 
+1. `indexing_contigs.sh` (Contig Indexing)
+2. `align_contigs_read.sh` (Map Reads for Coverage)
+3. `ordering_bam.sh` (BAM Sorting)
+4. `metabat2.sh` (Binning)
+5. `checkm.sh` (Quality Assessment)
+6. `filtered_checkm.py`(Quality Filtering)
+7. `gtdb-tk.sh` (Taxonomic Classification)
+8. `mag_functional_screening.sh` (Targeted Functional Search)
+9. `create_master_table.py` (Data Aggregation)
+
+### 4. Functional Analysis
+
+1. `prodigal_script.sh` (Gene Prediction)
+2. `script_diamond.sh` (Protein Alignment)
+3. `filtering_diamond.sh` (Quality Filtering)
+4. `extract_filtered_fna.py` (Sequence Extraction)
+5. `indexing_fna.sh` (Index Building)
+6. `allign_fna_bowtie2.sh` (Alignment)
+7. `Joinning_idxst.py` (Statistical Merging)
+
+### 5. Statistical Analysis
+
+* **Functional Data:** `plots.ipynb`
+* **Taxonomic Data:** `plots_taxonomy.ipynb`
+
+```
+
+```
