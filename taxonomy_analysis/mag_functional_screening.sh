@@ -25,6 +25,11 @@ for MAG in "$MAGS_DIR"/*.fa; do
              -a "$PROTEINS_DIR/${BIN_NAME}.faa" \
              -o "$PROTEINS_DIR/${BIN_NAME}.gff" \
              -p meta -q
+             # -i: input fasta file
+             # -a: output protein translations
+             # -o: output GFF file
+             # -p meta: metagenomic mode
+             # -q: quiet mode (suppress output)
 
     diamond blastp -d "$DB_PATH" \
                    -q "$PROTEINS_DIR/${BIN_NAME}.faa" \

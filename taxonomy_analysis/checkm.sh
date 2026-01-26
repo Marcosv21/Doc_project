@@ -41,13 +41,15 @@ for SAMPLE_PATH in "$BASE_DIR"/ERR*; do
 
             # 4. Run Main Workflow
             # -x fa: MetaBAT2 generates .fa files
+            # -t 4: Use 4 threads for CheckM. Adjust as needed.
+            # --pplacer_threads 1: Use 1 thread for pplacer step. Adjust as needed.
             checkm lineage_wf -t 4 --pplacer_threads 1 -x fa "$BIN_SUBDIR" "$OUT_DIR"
 
             # 5. Generate QA Reports (Txt and Tsv)
             if [ -f "$OUT_DIR/lineage.ms" ]; then
                 echo "  > Generating QA reports..."
-                checkm qa "$OUT_DIR/lineage.ms" "$OUT_DIR" > "$OUT_DIR/quality_report.txt"
-                checkm qa "$OUT_DIR/lineage.ms" "$OUT_DIR" --tab_table -f "$OUT_DIR/quality_table.tsv"
+                checkm qa "$OUT_DIR/lineage.ms" "$OUT_DIR" > "$OUT_DIR/quality_report.txt" # Text report
+                checkm qa "$OUT_DIR/lineage.ms" "$OUT_DIR" --tab_table -f "$OUT_DIR/quality_table.tsv" # TSV report 
                 echo "  > Done."
             else
                 echo "  > Error: CheckM lineage_wf failed (lineage.ms not found)."

@@ -5,20 +5,20 @@
 eval "$(conda shell.bash hook)"
 conda activate gtdbtk
 
-# CONFIGURATION
 SOURCE_BINS_DIR="/home/marcos/PRJEB59406/MetaBAT2_bins"
 INPUT_DIR="/home/marcos/PRJEB59406/gtdb_input_all_bins"
 OUTPUT_DIR="/home/marcos/PRJEB59406/taxonomy_gtdb"
 
-# Database path
+# Set GTDB-Tk data path (adjust if necessary) 
 export GTDBTK_DATA_PATH="/home/marcos/miniconda3/envs/gtdbtk/share/gtdbtk-2.6.1/db"
 
-# STEP 1: PREPARE INPUT
-echo "1. Organizing input files..."
 mkdir -p "$INPUT_DIR"
 mkdir -p "$OUTPUT_DIR"
 
 # Symlink all .fa files to the input directory
+# -name: avoid recreating links if they already exist
+# -exec ln -sf: create symbolic links, overwrite if they exist
+# -sf: symbolic link, force overwrite if link exists
 find "$SOURCE_BINS_DIR" -name "*.fa" -exec ln -sf {} "$INPUT_DIR" \;
 
 # Validate file count
@@ -30,8 +30,7 @@ if [ "$NUM_GENOMES" -eq 0 ]; then
     exit 1
 fi
 
-# STEP 2: RUN GTDB-TK
-echo "2. Running GTDB-Tk classification..."
+echo "Running GTDB-Tk classification..."
 
 # Memory optimization: pplacer_cpus=1 and skip_ani_screen to reduce RAM usage
 # Run the classification workflow
