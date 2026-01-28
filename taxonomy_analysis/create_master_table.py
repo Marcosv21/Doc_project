@@ -4,7 +4,7 @@ import glob
 # Define directories
 GTDB_DIR = "/home/marcos/PRJEB59406/taxonomy_gtdb"
 DIAMOND_DIR = "/home/marcos/PRJEB59406/mag_annotation/diamond_matches"
-OUTPUT_FILE = "/home/marcos/PRJEB59406/tabela_mestra_mag_sialidase.xlsx"
+OUTPUT_FILE = "/home/marcos/PRJEB59406/tabela_mestra_mag_sialidase_taxonomy.xlsx"
 # Load GTDB-Tk taxonomy summaries
 def main():
     gtdb_files = glob.glob(os.path.join(GTDB_DIR, "gtdbtk.*.summary.tsv")) # Adjust pattern as needed to match your files 
