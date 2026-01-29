@@ -38,14 +38,14 @@ gtdbtk classify_wf \
     --genome_dir "$INPUT_DIR" \
     --extension 'fa' \
     --out_dir "$OUTPUT_DIR" \
-    --cpus 8 \
-    --pplacer_cpus 1 \
-    --skip_ani_screen
+    --cpus 16 \
+    --pplacer_cpus 4 \
+    #--skip_ani_screen
 # genome_dir: Directory with input genomes
 # extension: File extension of genome files
 # out_dir: Output directory
 # cpus: Number of CPUs to use
 # pplacer_cpus: Number of CPUs for pplacer (set to 1 for lower RAM usage)
-# skip_ani_screen: Skip ANI screening to save memory    
+# skip_ani_screen: Skip ANI screening to save memory, use with caution, may affect accuracy 
 echo "------------------------------------------------"
 echo "Done. Results: $OUTPUT_DIR"
