@@ -24,11 +24,12 @@ To calculate the parameters `-m` (minimum) and `-M` (maximum), use the following
     * Look for the **Insert Size Estimation** graph.
     * Use the value indicated at the **Peak**.
 
+
 ## Execution Order
 
 ```mermaid
 graph TD
-    %% Node Styles - Adicionei "color:#000000" para texto preto
+    %% Node Styles
     classDef shell fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000000;
     classDef python fill:#fff9c4,stroke:#fbc02d,stroke-width:2px,color:#000000;
     classDef ipynb fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#000000;
@@ -58,9 +59,17 @@ graph TD
         Tax3 --> Tax4[metabat2.sh]:::shell
         Tax4 --> Tax5[checkm.sh]:::shell
         Tax5 --> Tax6[filtered_checkm.py]:::python
+        
+        
+        
+        %% Caminho 1: GTDB (Padrão)
         Tax6 --> Tax7[gtdb-tk.sh]:::shell
         Tax7 --> Tax8[mag_functional_screening.sh]:::shell
         Tax8 --> Tax9[create_master_table.py]:::python
+
+        %% Caminho 2: BAT/CAT (Validação)
+        Tax6 --> TaxBAT1[run_bat_pipeline.sh]:::shell
+        TaxBAT1 --> TaxBAT2[merge_bat_results.py]:::python
     end
 
     %% --- 3. FUNCTIONAL ANALYSIS ---
@@ -82,13 +91,18 @@ graph TD
         
         %% Taxonomy result -> plots_taxonomy.ipynb
         Tax9 --> Stat2(plots_taxonomy.ipynb):::ipynb
+        
+        %% BAT result -> plots_taxonomy.ipynb (Pontilhado para indicar suporte)
+        TaxBAT2 -.-> Stat2
     end
 
 ```
 
 ### 1. Preparation
 
-*(Initial data setup)*
+*(Initial data setup and database downloads)*
+
+1. `download_cat_prebuilt.sh` (Download CAT/BAT Databases - *Run once*)
 
 ### 2. Cleaning and Assembly
 
@@ -106,11 +120,19 @@ The pipeline follows this specific sequence:
 2. `align_contigs_read.sh` (Map Reads for Coverage)
 3. `ordering_bam.sh` (BAM Sorting)
 4. `metabat2.sh` (Binning)
-5. `checkm.sh` (Quality Assessment)
-6. `filtered_checkm.py`(Quality Filtering)
-7. `gtdb-tk.sh` (Taxonomic Classification)
-8. `mag_functional_screening.sh` (Targeted Functional Search)
-9. `create_master_table.py` (Data Aggregation)
+5. **Quality & Standard Classification:**
+* `checkm.sh` (Quality Assessment)
+* `filtered_checkm.py` (Quality Filtering)
+* `gtdb-tk.sh` (Taxonomic Classification)
+
+
+6. **Validation & Contamination Check (CAT/BAT):**
+* `run_bat_pipeline.sh` (Taxonomic Classification via Homology)
+* `merge_bat_results.py` (Aggregate BAT Reports)
+
+
+7. `mag_functional_screening.sh` (Targeted Functional Search)
+8. `create_master_table.py` (Data Aggregation)
 
 ### 4. Functional Analysis
 
@@ -126,7 +148,37 @@ The pipeline follows this specific sequence:
 
 * **Functional Data:** `plots.ipynb`
 * **Taxonomic Data:** `plots_taxonomy.ipynb`
+* **Merge Data:** `plots_doc.ipynb`
 
-```
+
+## Reference
+
+BUCHFINK, B.; XIE, C.; HUSON, D. H. Fast and sensitive protein alignment using DIAMOND. Nature Methods, v. 12, n. 1, p. 59–60, 17 nov. 2014.
+
+CHAUMEIL, P.-A.; MUSSIG, A. J.; HUGENHOLTZ, P.; PARKS, D. H. GTDB-Tk v2: memory friendly classification with the genome taxonomy database. Bioinformatics, v. 38, n. 23, p. 5315–5316, 11 out. 2022.
+
+CHEN, S. Ultrafast one‐pass FASTQ data preprocessing, quality control, and deduplication using fastp. iMeta, v. 2, n. 2, 8 maio 2023.
+
+DANECEK, P.; BONFIELD, J. K.; LIDDLE, J.; MARSHALL, J.; OHAN, V.; POLLARD, M. O.; WHITWHAM, A.; KEANE, T.; MCCARTHY, S. A.; DAVIES, R. M.; LI, H. Twelve years of SAMtools and BCFtools. GigaScience, v. 10, n. 2, 29 jan. 2021.
+
+HARRIS, C. R.; MILLMAN, K. J.; VAN DER WALT, S. J.; GOMMERS, R.; VIRTANEN, P.; COURNAPEAU, D.; WIESER, E.; TAYLOR, J.; BERG, S.; SMITH, N. J.; KERN, R.; PICUS, M.; HOYER, S.; VAN KERKWIJK, M. H.; BRETT, M.; HALDANE, A.; DEL RÍO, J. F.; WIEBE, M.; PETERSON, P.; GÉRARD-MARCHANT, P. Array Programming with NumPy. Nature, v. 585, n. 7825, p. 357–362, 16 set. 2020. Disponível em: <https://www.nature.com/articles/s41586-020-2649-2>.
+
+HYATT, D.; CHEN, G.-L.; LOCASCIO, P. F.; LAND, M. L.; LARIMER, F. W.; HAUSER, L. J. Prodigal: prokaryotic gene recognition and translation initiation site identification. BMC Bioinformatics, v. 11, n. 1, 8 mar. 2010.
+
+LANGMEAD, B.; WILKS, C.; ANTONESCU, V.; CHARLES, R. Scaling read aligners to hundreds of threads on general-purpose processors. Bioinformatics, v. 35, n. 3, p. 421–432, 18 jul. 2018.
+
+LI, D.; LIU, C.-M.; LUO, R.; SADAKANE, K.; LAM, T.-W. MEGAHIT: an ultra-fast single-node solution for large and complex metagenomics assembly via succinct de Bruijn graph. Bioinformatics, v. 31, n. 10, p. 1674–1676, 20 jan. 2015. Disponível em: <https://arxiv.org/pdf/1409.7208.pdf>.
+
+MAGOC, T.; SALZBERG, S. L. FLASH: fast length adjustment of short reads to improve genome assemblies. Bioinformatics, v. 27, n. 21, p. 2957–2963, 7 set. 2011.
+
+PARKS, D. H.; IMELFORT, M.; SKENNERTON, C. T.; HUGENHOLTZ, P.; TYSON, G. W. CheckM: assessing the quality of microbial genomes recovered from isolates, single cells, and metagenomes. Genome Research, v. 25, n. 7, p. 1043–1055, 14 maio 2015. Disponível em: <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4484387/>.
+
+VIRTANEN, P.; GOMMERS, R.; OLIPHANT, T. E.; HABERLAND, M.; REDDY, T.; COURNAPEAU, D.; BUROVSKI, E.; PETERSON, P.; WECKESSER, W.; BRIGHT, J.; VAN DER WALT, S. J.; BRETT, M.; WILSON, J.; MILLMAN, K. J.; MAYOROV, N.; NELSON, A. R. J.; JONES, E.; KERN, R.; LARSON, E.; CAREY, C. J. SciPy 1.0: fundamental algorithms for scientific computing in Python. Nature Methods, v. 17, n. 3, p. 261–272, 3 fev. 2020. Disponível em: <https://www.nature.com/articles/s41592-019-0686-2>.
+
+VON MEIJENFELDT, F. A. B.; ARKHIPOVA, K.; CAMBUY, D. D.; COUTINHO, F. H.; DUTILH, B. E. Robust taxonomic classification of uncharted microbial sequences and bins with CAT and BAT. Genome Biology, v. 20, n. 1, 22 out. 2019. Acesso em: 14 fev. 2022.
+
+
+
+
 
 ```

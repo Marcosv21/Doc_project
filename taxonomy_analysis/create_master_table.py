@@ -1,70 +1,77 @@
 import pandas as pd
 import os
 import glob
-# Define directories
-GTDB_DIR = "/home/marcos/PRJEB59406/taxonomy_gtdb"
-DIAMOND_DIR = "/home/marcos/PRJEB59406/mag_annotation/diamond_matches"
-OUTPUT_FILE = "/home/marcos/PRJEB59406/tabela_mestra_mag_sialidase_taxonomy.xlsx"
-# Load GTDB-Tk taxonomy summaries
+import re
+
+# Configuration
+GTDB_DIR = "/home/marcos/PRJEB59406/fila_*/taxonomy_gtdb"
+DIAMOND_DIR = "/home/marcos/PRJEB59406/fila_*/mag_annotation/diamond_matches"
+OUTPUT_FILE = "/home/marcos/PRJEB59406/master_table_mag_sialidase.csv"
+
+def parse_taxonomy(tax_string):
+    """Splits the GTDB string into clean Phylum, Genus, and Species."""
+    if pd.isna(tax_string):
+        return pd.Series(['Unknown', 'Unknown', 'Unknown'])
+    
+    # Extract levels using simple string splitting
+    parts = tax_string.split(';')
+    p = next((x.split('__')[1] for x in parts if 'p__' in x), 'Unknown')
+    g = next((x.split('__')[1] for x in parts if 'g__' in x), 'Unknown')
+    s = next((x.split('__')[1] for x in parts if 's__' in x), 'Unknown')
+    return pd.Series([p, g, s])
+
 def main():
-    gtdb_files = glob.glob(os.path.join(GTDB_DIR, "gtdbtk.*.summary.tsv")) # Adjust pattern as needed to match your files 
-    # Read and concatenate all GTDB-Tk summary files
-    dfs_gtdb = [] # List to hold individual dataframes 
-    for f in gtdb_files: # Iterate over each GTDB-Tk summary file 
-        try: # Try to read the file
-            df = pd.read_csv(f, sep="\t", usecols=['user_genome', 'classification'])
-            dfs_gtdb.append(df)
-        except Exception as e:
-            print(f"   Error lecture {f}: {e}")
-            # Skip files that cannot be read 
-    if not dfs_gtdb:
-        print(" anything not found summary.tsv with GTDB-Tk")
-        return
-    df_tax = pd.concat(dfs_gtdb)
+    # 1. Load Taxonomy Data
+    tax_files = glob.glob(os.path.join(GTDB_DIR, "gtdbtk.*.summary.tsv"))
+    if not tax_files: return print("No GTDB files found.")
     
-    df_tax['mag_id'] = df_tax['user_genome'].astype(str).str.replace(r'\.(fa|fasta|fna)$', '', regex=True)
+    df_tax = pd.concat([pd.read_csv(f, sep="\t", usecols=['user_genome', 'classification']) for f in tax_files])
     
-    print(f"   Taxonomy loaded for {len(df_tax)} MAGs.")
+    # Standardize ID to 'bin.X'
+    df_tax['mag_id'] = df_tax['user_genome'].str.extract(r'(bin\.\d+)', expand=False)
+    
+    # Split taxonomy into columns
+    df_tax[['Phylum', 'Genus', 'Species']] = df_tax['classification'].apply(parse_taxonomy)
+    print(f"Taxonomy loaded: {len(df_tax)} MAGs")
 
-    diamond_files = glob.glob(os.path.join(DIAMOND_DIR, "*_sialidase_hits.tsv"))
-    # Process Diamond sialidase hit files 
-    mag_sialidase_data = []
-# Iterate over each Diamond output file 
+    # 2. Load Diamond (Functional) Data
+    diamond_files = glob.glob(os.path.join(DIAMOND_DIR, "*_hits_sial.tsv"))
+    func_results = []
+    
     for f in diamond_files:
-        filename = os.path.basename(f)
-        mag_id = filename.replace("_sialidase_hits.tsv", "")
-        # Check if the file is not empty 
+        # Extract 'bin.X' from filename
+        mid_match = re.search(r'(bin\.\d+)', os.path.basename(f))
+        mid = mid_match.group(1) if mid_match else os.path.basename(f)
+        
         if os.path.getsize(f) > 0:
-            try: # Try to read the Diamond output file 
-                df_hits = pd.read_csv(f, sep="\t", header=None)
-                num_hits = len(df_hits)
-                # Get the best hit (first row, second column) 
-                best_hit = df_hits.iloc[0, 1] 
-                # Append data to the list 
-                mag_sialidase_data.append({
-                    'mag_id': mag_id,
-                    'has_sialidase': 'YES',        
-                    'gene_copy_number': num_hits,  
-                    'best_db_hit': best_hit        
-                }) # End of append 
-            except pd.errors.EmptyDataError:
-               mag_sialidase_data.append({'mag_id': mag_id, 'has_sialidase': 'NO', 'gene_copy_number': 0, 'best_db_hit': '-'})
+            hits = pd.read_csv(f, sep="\t", header=None)
+            func_results.append({
+                'mag_id': mid, 
+                'has_sialidase': 'YES', 
+                'gene_count': len(hits), 
+                'best_hit': hits.iloc[0, 1]
+            })
         else:
-            mag_sialidase_data.append({'mag_id': mag_id, 'has_sialidase': 'NO', 'gene_copy_number': 0, 'best_db_hit': '-'})
+            func_results.append({'mag_id': mid, 'has_sialidase': 'NO', 'gene_count': 0, 'best_hit': '-'})
 
-    df_func = pd.DataFrame(mag_sialidase_data)
-   
-    print("\n3. Merging tables...")
-    # Merge taxonomy and functional data 
+    df_func = pd.DataFrame(func_results).drop_duplicates(subset='mag_id')
+
+    # 3. Merge and Clean
     df_final = pd.merge(df_tax, df_func, on='mag_id', how='left')
-    #  Fill NaN values for MAGs without sialidase data 
-    df_final['has_sialidase'] = df_final['has_sialidase'].fillna('No Data')
-    df_final['gene_copy_number'] = df_final['gene_copy_number'].fillna(0)
-    # Fill best_db_hit with '-' for MAGs without sialidase data
-    df_final = df_final[['mag_id', 'classification', 'has_sialidase', 'gene_copy_number', 'best_db_hit']]
-    # Save final table to Excel 
-    print(f"\n4. Saving to {OUTPUT_FILE}...")
-    df_final.to_excel(OUTPUT_FILE, index=False)
-    print("Done.")
+    
+    # Fill missing values for MAGs with no Diamond hits
+    df_final['has_sialidase'] = df_final['has_sialidase'].fillna('NO')
+    df_final['gene_count'] = df_final['gene_count'].fillna(0)
+    df_final['best_hit'] = df_final['best_hit'].fillna('-')
+
+    # Select and reorder columns
+    final_cols = ['mag_id', 'Phylum', 'Genus', 'Species', 'has_sialidase', 'gene_count', 'best_hit']
+    df_final = df_final[final_cols]
+
+    # 4. Save
+    df_final.to_csv(OUTPUT_FILE, index=False, sep="\t")
+    print(f"Success! Master table saved to: {OUTPUT_FILE}")
+    print(f"Found {len(df_final[df_final['has_sialidase']=='YES'])} sialidase-positive MAGs.")
+
 if __name__ == "__main__":
     main()
