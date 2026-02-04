@@ -15,7 +15,7 @@ mkdir -p "$OUT_BASE"
 
 # Database Paths
 # Ensure this matches your specific database folder name
-DB_BASE="/temporario2/17404478/databases/CAT_data/20240422_CAT_nr"
+DB_BASE="/temporario2/17404478/PRJEB59406/code/data_base/CAT_data/20241212_CAT_nr_website"
 DB_FOLDER="$DB_BASE/db"
 TAX_FOLDER="$DB_BASE/tax"
 
