@@ -3,7 +3,7 @@
 # Install: conda install -c bioconda sra-tools
 
 # Path to the file with accession numbers (a simple text file with one accession number per line) - it's acquired file in run selector (SRA)
-ACCESSION_FILE="/temporario2/9290665/DADOS/wallen/ACCESSION_FILE_WALLEN" #O caminho que está o acession file
+ACCESSION_FILE="/temporario2/9290665/DADOS/wallen/ACCESSION_FILE_WALLEN" 
 
 # Destination directories
 SRA_DIR="/temporario2/9290665/DADOS/wallen/sra_files"
