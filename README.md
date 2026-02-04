@@ -102,8 +102,6 @@ graph TD
 
 *(Initial data setup and database downloads)*
 
-1. `download_cat_prebuilt.sh` (Download CAT/BAT Databases - *Run once*)
-
 ### 2. Cleaning and Assembly
 
 The pipeline follows this specific sequence:
