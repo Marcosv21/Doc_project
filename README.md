@@ -147,6 +147,7 @@ The pipeline follows this specific sequence:
 * **Functional Data:** `plots.ipynb`
 * **Taxonomic Data:** `plots_taxonomy.ipynb`
 * **Merge Data:** `plots_doc.ipynb`
+                  `plots_doc_simple.ipynb`
 
 
 ## Reference
