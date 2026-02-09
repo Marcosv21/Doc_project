@@ -1,6 +1,5 @@
-# Ph.D. Project
+# Investigation of the cross-feeding mechanism of sialic acids between *Staphylococcus aureus* and commensal bacteria in the context of atopic dermatitis.
 
-**Title:** Investigation of the cross-feeding mechanism of sialic acids between *Staphylococcus aureus* and commensal bacteria in the context of atopic dermatitis.
 
 ![Bioinformatic Pipeline Step](./images/image.png)
 *(Figure: Workflow of the bioinformatic analysis)*
@@ -69,7 +68,9 @@ graph TD
 
         %% Caminho 2: BAT/CAT (Validação)
         Tax6 --> TaxBAT1[run_bat_pipeline.sh]:::shell
-        TaxBAT1 --> TaxBAT2[merge_bat_results.py]:::python
+        TaxBAT1 --> TaxBAT2[mag_functional_screening.sh]:::shell
+        TaxBAT2 --> TaxBAT3[merge_bat_results.py]:::python
+        TaxBAT2 --> Tax9[create_master_table.py]:::python
     end
 
     %% --- 3. FUNCTIONAL ANALYSIS ---
@@ -93,7 +94,7 @@ graph TD
         Tax9 --> Stat2(plots_taxonomy.ipynb):::ipynb
         
         %% BAT result -> plots_taxonomy.ipynb (Pontilhado para indicar suporte)
-        TaxBAT2 -.-> Stat2
+        TaxBAT3 -.-> Stat2
     end
 
 ```
