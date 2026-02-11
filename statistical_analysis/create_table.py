@@ -4,9 +4,9 @@ import os
 
 PATH_BINS = "/temporario2/17404478/PRJEB59406/filas_processamento/fila_*/gtdb_input_all_bins/*.fa"
 PATH_DIAMOND = "/temporario2/17404478/PRJEB59406/filas_processamento/fila_*/mag_annotation/diamond_matches/*"
-FILE_ABUNDANCE = "/temporario2/17404478/PRJEB59406/results/unified_abundance_with_groups.tsv"
-FILE_TAXONOMY = "/temporario2/17404478/PRJEB59406/results/master_table_mag_sialidase.tsv"
-OUTPUT_FILE = "/temporario2/17404478/PRJEB59406/results/Final_Table_Taxonomy_Function.tsv"
+FILE_ABUNDANCE = "/temporario2/17404478/PRJEB59406/table/unified_abundance_with_groups.tsv"
+FILE_TAXONOMY = "/temporario2/17404478/PRJEB59406/table/master_table_mag_sialidase_gtdb.csv"
+OUTPUT_FILE = "/temporario2/17404478/PRJEB59406/ORGANIZED_RESULTS/Final_Table_Taxonomy_Function_gtdb.tsv"
 
 print("1. Loading Abundance Data...")
 df_abund = pd.read_csv(FILE_ABUNDANCE, sep='\t')

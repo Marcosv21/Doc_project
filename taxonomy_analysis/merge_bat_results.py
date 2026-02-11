@@ -3,8 +3,8 @@ import os
 import glob
 
 
-RESULTS_DIR = "/temporario2/17404478/PRJEB59406/filas_processamento/fila_1/BAT_classification"
-OUTPUT_FILE = "/temporario2/17404478/PRJEB59406/results/BAT_Final_Summary_All_Samples.tsv"
+RESULTS_DIR = "/home/marcos/PRJEB59406/Resultados1/fila_*/BAT_classification"
+OUTPUT_FILE = "/home/marcos/PRJEB59406/Resultados1/BAT_Final_Summary_All_Samples.tsv"
 
 print(f"Searching for results in: {RESULTS_DIR}")
 
