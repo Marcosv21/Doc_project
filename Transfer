@@ -7,7 +7,7 @@ scp -r -P 8020 -i ./id_ed25519  17404478@localhost:/temporario2/17404478/PRJEB59
 scp -r -P 8020 -i ./id_ed25519  17404478@localhost:/temporario2/17404478/PRJEB59406/abundance_results/heatmap_groups_clean.png .
 
 #Para transferências meu linux --> servidor:
-scp -r -P 8020 -i ./id_ed25519 ./pasta_ou_arquivo_a_ser_transferido/ 17404478@localhost:/temporario2/17404478/PRJEB59406
+scp -r -P 8020 -i ./id_ed25519 ./pathway_db.tar.xz 17404478@localhost:/temporario2/17404478/PRJEB59406/code/data_base/
 
 #Para transferências entre servidores, fazer o mesmo processo de dentro do servidor que se conectará ao aguia4
 

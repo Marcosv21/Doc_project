@@ -11,7 +11,7 @@ dir="/home/marcos/PRJEB59406/prodigal_outputs"
 out_dir="/home/marcos/PRJEB59406/diamond_results"
 mkdir -p "$out_dir"
 # Define Diamond database path
-db="/home/marcos/PRJEB59406/data_base1/diamond_db/all_sequences.dmnd"  # DIAMOND database
+db="/temporario2/17404478/PRJEB59406/code/data_base/sialic_acid_pathway.dmnd"  # DIAMOND database
 
 # Loop to process all .faa files in the directory
 for query in $dir/*.faa; do
