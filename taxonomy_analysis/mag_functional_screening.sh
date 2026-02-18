@@ -11,7 +11,7 @@ OUTPUT_DIR="/home/marcos/PRJEB59406/mag_annotation"
 PROTEINS_DIR="$OUTPUT_DIR/proteins"
 DIAMOND_OUT="$OUTPUT_DIR/diamond_matches"
 
-DB_PATH="/temporario2/17404478/PRJEB59406/code/data_base/pathway_db/sialic_acid_pathway.dmnd"
+DB_PATH="/temporario2/17404478/PRJEB59406/code/data_base/pathway_db/db/sialic_acid_pathway.dmnd"
 
 mkdir -p "$OUTPUT_DIR"
 mkdir -p "$PROTEINS_DIR"

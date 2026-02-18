@@ -5,8 +5,8 @@ eval "$(conda shell.bash hook)"
 conda activate cdhit
 
 # --- CONFIGURATION ---
-INPUT_DIR="/temporario2/17404478/PRJEB59406/code/data_base/diamond_db/marcos"
-OUTPUT_DIR="/temporario2/17404478/PRJEB59406/code/data_base/diamond_db/marcos/pathway_db"
+INPUT_DIR="/temporario2/17404478/PRJEB59406/code/data_base/pathway_db"
+OUTPUT_DIR="/temporario2/17404478/PRJEB59406/code/data_base/pathway_db/db"
 DB_NAME="sialic_acid_pathway"
 
 mkdir -p "$OUTPUT_DIR"

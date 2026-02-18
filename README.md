@@ -141,6 +141,7 @@ The pipeline follows this specific sequence:
 4. `extract_filtered_fna.py` (Sequence Extraction)
 5. `indexing_fna.sh` (Index Building)
 6. `allign_fna_bowtie2.sh` (Alignment)
+7. `indexing_idxstats.py`
 7. `Joinning_idxst.py` (Statistical Merging)
 
 ### 5. Statistical Analysis

@@ -9,8 +9,8 @@ columns = [
 ]
 
 # Define input and output directories
-INPUT_DIR = "/home/marcos/PRJEB59406/diamond_results"
-OUTPUT_DIR = "/home/marcos/PRJEB59406/diamond_results_filtrados"
+INPUT_DIR = "/temporario2/17404478/PRJEB59406/filas_processamento/fila_1/diamond_results"
+OUTPUT_DIR = "/temporario2/17404478/PRJEB59406/filas_processamento/fila_1/diamond_results_filtrados"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Get list of TSV files in the input directory
@@ -18,7 +18,6 @@ document = glob.glob(os.path.join(INPUT_DIR, "*.tsv"))
 
 # Process each TSV file
 for arc in document:
-    # --- CORREÇÃO AQUI: Usar 'arc' em vez de 'document' ---
     base_name = os.path.basename(arc) 
     print(f"-> Processing: {base_name}") 
     
@@ -45,7 +44,6 @@ for arc in document:
         df['qlen/slen'] = df['qlen'] / df['slen'] 
         
         # Apply filtering criteria
-        # (Renomeei 'filter' para 'filter_mask' para evitar conflito com palavra reservada)
         filter_mask = (
             (df['pident'] >= 40) &
             (df['evalue'] <= 1e-4) &
@@ -64,5 +62,3 @@ for arc in document:
 
     except Exception as e: 
         print(f"   ERROR IN {base_name}: {e}") 
-
-print("Finish!")
