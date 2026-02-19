@@ -1,34 +1,38 @@
-#Don't forget to download the archive from ENA's site (script downloads wget)
-
 #!/bin/bash
 
-FASTQ_DIR="/media/marcos/TRABALHO/PRJEB59406/fastq_files"
-URL_LIST="/home/marcos/PRJEB59406/enasdownload(1).sh"
+PROCESS_DIR="/temporario2/17404478/PRJEB59406/filas_processamento"
 
-mkdir -p "$FASTQ_DIR"
+for i in {1..4}; do
+    TARGET_PATH="${PROCESS_DIR}/fila_${i}/fastq_files"
+    echo "Creating: $TARGET_PATH"
+    mkdir -p "$TARGET_PATH"
+done
 
-# Check if URL list file exists
-if [ ! -f "$URL_LIST" ]; then
-    echo "ERROR: List file $URL_LIST not found."
-    exit 1
-fi
-echo "Starting file download to: $FASTQ_DIR" # Navigate to the target directory
-cd "$FASTQ_DIR" || exit
-while read -r LINE; do
-    if [[ -z "$LINE" || "$LINE" == \#* ]]; then
-        continue
-    fi
-    URL=$(echo "$LINE" | awk '{print $NF}')
+URLS=(
+)
 
-    echo "------------------------------------------------"
-    echo "Processing: $URL"
-  
-    wget -nc -c --show-progress "$URL" # Download the file with resume capability
-    if [ $? -ne 0 ]; then
-        echo "ERROR downloading: $URL"
+declare -A sample_map
+
+current_queue=1
+
+echo "Starting download and distribution..."
+
+for url in "${URLS[@]}"; do
+    filename=$(basename "$url")
+    
+    sample_id=$(echo "$filename" | cut -d'_' -f1)
+    if [[-v sample_map[$sample_id] ]]; then
+       queue_num=${sample_map[$sample_id]}
     else
-        echo "Success."
+       queue_num=$current_queue
+       sample_map[$sample_id]=$queue_num
+
+       current_queue=$((current_queue + 1))
+       if [ $current_queue -gt 4 ]; then
+          current_queue=1
+       fi
     fi
-done < "$URL_LIST"
-echo "------------------------------------------------"
-echo "All downloads have been processed!"
+    
+    target_dir="${PROCESS_DIR}/fila_${queue_num}/fastq_files"
+    wget -nc -P "$target_dir" "$url"
+done
