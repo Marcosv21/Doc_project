@@ -2,12 +2,15 @@
 # Dependencies: SRA Toolkit (prefetch, fastq-dump)
 # Install: conda install -c bioconda sra-tools
 
+eval "$(conda shell.bash hook)"
+conda activate sra-tools
+
 # Path to the file with accession numbers (a simple text file with one accession number per line) - it's acquired file in run selector (SRA)
-ACCESSION_FILE="/temporario2/9290665/DADOS/wallen/ACCESSION_FILE_WALLEN" 
+ACCESSION_FILE="/temporario2/17404478/PRJNA46333/SRR_Acc_List.txt" 
 
 # Destination directories
-SRA_DIR="/temporario2/9290665/DADOS/wallen/sra_files"
-FASTQ_DIR="/temporario2/9290665/DADOS/wallen/fastq_files"
+SRA_DIR="/temporario2/17404478/PRJNA46333/sra_files"
+FASTQ_DIR="/temporario2/17404478/PRJNA46333/assay/fastq_files"
 
 # Create directories if they do not exist
 mkdir -p $SRA_DIR

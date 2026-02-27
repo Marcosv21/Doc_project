@@ -47,12 +47,16 @@ def main():
             hits = pd.read_csv(f, sep="\t", header=None)
             func_results.append({
                 'mag_id': mid, 
-                'has_sialidase': 'YES', 
+                'has_nanH': 'YES' if any(hits.iloc[:, 1].str.contains('nanH', case=False, na=False)) else 'NO',
+                'has_nanE': 'YES' if any(hits.iloc[:, 1].str.contains('nanE', case=False, na=False)) else 'NO',
+                'has_nanK': 'YES' if any(hits.iloc[:, 1].str.contains('nanK', case=False, na=False)) else 'NO',
+                'has_nanA': 'YES' if any(hits.iloc[:, 1].str.contains('nanA', case=False, na=False)) else 'NO',
+                'has_nanT': 'YES' if any(hits.iloc[:, 1].str.contains('nanT', case=False, na=False)) else 'NO',
                 'gene_count': len(hits), 
                 'best_hit': hits.iloc[0, 1]
             })
         else:
-            func_results.append({'mag_id': mid, 'has_sialidase': 'NO', 'gene_count': 0, 'best_hit': '-'})
+            func_results.append({'mag_id': mid, 'has_nanH': 'NO', 'has_nanE': 'NO', 'has_nanK': 'NO', 'has_nanA': 'NO', 'has_nanT': 'NO', 'gene_count': 0, 'best_hit': '-'})
 
     df_func = pd.DataFrame(func_results).drop_duplicates(subset='mag_id')
 
@@ -60,18 +64,27 @@ def main():
     df_final = pd.merge(df_tax, df_func, on='mag_id', how='left')
     
     # Fill missing values for MAGs with no Diamond hits
-    df_final['has_sialidase'] = df_final['has_sialidase'].fillna('NO')
+    df_final['has_nanH'] = df_final['has_nanH'].fillna('NO')
+    df_final['has_nanE'] = df_final['has_nanE'].fillna('NO')
+    df_final['has_nanK'] = df_final['has_nanK'].fillna('NO')
+    df_final['has_nanA'] = df_final['has_nanA'].fillna('NO')
+    df_final['has_nanT'] = df_final['has_nanT'].fillna('NO')
     df_final['gene_count'] = df_final['gene_count'].fillna(0)
     df_final['best_hit'] = df_final['best_hit'].fillna('-')
 
     # Select and reorder columns
-    final_cols = ['mag_id', 'Phylum', 'Genus', 'Species', 'has_sialidase', 'gene_count', 'best_hit']
+    final_cols = ['mag_id', 'Phylum', 'Genus', 'Species', 'has_nanH', 'has_nanE', 'has_nanK', 'has_nanA', 'has_nanT', 'gene_count', 'best_hit']
     df_final = df_final[final_cols]
 
     # 4. Save
     df_final.to_csv(OUTPUT_FILE, index=False, sep="\t")
     print(f"Success! Master table saved to: {OUTPUT_FILE}")
-    print(f"Found {len(df_final[df_final['has_sialidase']=='YES'])} sialidase-positive MAGs.")
+    print(f"Found {len(df_final[df_final['has_nanH']=='YES'])} nanH-positive MAGs.")
+    print(f"Found {len(df_final[df_final['has_nanE']=='YES'])} nanE-positive MAGs.")
+    print(f"Found {len(df_final[df_final['has_nanK']=='YES'])} nanK-positive MAGs.")
+    print(f"Found {len(df_final[df_final['has_nanA']=='YES'])} nanA-positive MAGs.")
+    print(f"Found {len(df_final[df_final['has_nanT']=='YES'])} nanT-positive MAGs.")
+    
 
 if __name__ == "__main__":
     main()
