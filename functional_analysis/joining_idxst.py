@@ -3,11 +3,12 @@ import pandas as pd
 import glob
 import numpy as np
 
-BASE_PATH = "/home/marcos/PRJEB59406/ORGANIZED_RESULTS"
+BASE_PATH = "/home/marcos/PRJNA46333/ORGANIZED_RESULTS_PRJNA46333"
 FUNCTIONAL_DIR = os.path.join(BASE_PATH, "functional")
 
 OUTPUT_COUNTS = os.path.join(FUNCTIONAL_DIR, "matrix_counts.tsv") #DESeq2
 OUTPUT_TPM = os.path.join(FUNCTIONAL_DIR, "matrix_tpm.tsv") #visualization
+OUTPUT_FPKM = os.path.join(FUNCTIONAL_DIR, "matrix_fpkm.tsv")
 OUTPUT_LONG = os.path.join(FUNCTIONAL_DIR, "long_format_table.tsv") #CLR -> SPIEC-EASI
 
 
@@ -36,6 +37,19 @@ def load_diamond(path):
 
     return df[['CDS', 'Protein']]
 
+def calculate_expression_metrics(df):
+    # --- 1. FPKM ---
+    total_mapped = df['Mapped'].sum()
+    
+    if total_mapped > 0:
+        # FPKM = (Mapped * 10^9) / (Length * Total_Mapped)
+        df['FPKM'] = (df['Mapped'] * 1e9) / (df['Length'] * total_mapped)
+        
+       
+    else:
+        df['FPKM'] = 0.0
+        
+    return df 
 
 def calculate_tpm(df):
     # Calculate the ratio (Mapped / Length) for each protein/gene
@@ -59,7 +73,7 @@ def calculate_tpm(df):
 
 all_long = []
 
-queue_dirs = glob.glob(os.path.join(FUNCTIONAL_DIR, "fila_*"))
+queue_dirs = glob.glob(os.path.join(FUNCTIONAL_DIR, "assay")) #queue_dirs = glob.glob(os.path.join(FUNCTIONAL_DIR, "fila_*"))
 
 for queue_path in sorted(queue_dirs):
 
@@ -84,13 +98,16 @@ for queue_path in sorted(queue_dirs):
         df_merged = df_diamond.merge(df_idx, on='CDS', how='inner')
 
         df_merged = calculate_tpm(df_merged)
+        
+        df_merged = calculate_expression_metrics(df_merged)
 
         df_merged['Sample'] = sample_id
 
         # Agruped by Sample and Protein, summing Mapped and TPM
         df_grouped = df_merged.groupby(['Sample', 'Protein']).agg({
             'Mapped': 'sum',
-            'TPM': 'sum'
+            'TPM': 'sum',
+            'FPKM': 'sum',
         }).reset_index()
 
         all_long.append(df_grouped)
@@ -130,7 +147,19 @@ matrix_tpm = final_long.pivot_table(
 
 matrix_tpm.to_csv(OUTPUT_TPM, sep='\t')
 
-print(" Matrizes geradas:")
+# =========================
+# FPKM Matrix
+# =========================
+matrix_fpkm = final_long.pivot_table(
+    index='Protein',
+    columns='Sample',
+    values='FPKM',
+    fill_value=0
+)
+
+matrix_fpkm.to_csv(OUTPUT_FPKM, sep='\t')
+
 print(" - Counts:", OUTPUT_COUNTS)
 print(" - TPM:", OUTPUT_TPM)
+print(" - FPKM:", OUTPUT_FPKM)
 print(" - Long format:", OUTPUT_LONG)

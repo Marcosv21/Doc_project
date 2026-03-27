@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # --- CONFIGURATION ---
-BASE_DIR="/temporario2/17404478/PRJEB59406"
-INPUT_DIR="$BASE_DIR/filas_processamento"
-OUTPUT_DIR="$BASE_DIR/ORGANIZED_RESULTS"
+BASE_DIR="/temporario2/17404478/PRJNA46333"
+INPUT_DIR="$BASE_DIR/assay"
+OUTPUT_DIR="$BASE_DIR/ORGANIZED_RESULTS_PRJNA46333"
 
 # Define items to compress for each category
-FUNCTIONAL_LIST=("idxstats" "diamond_results_filtrados")
-TAXONOMY_LIST=("gtdb_input_all_bins" "mag_annotation" "BAT_classification" "taxonomy_gtdb" "filtered_bins_high_quality")
+FUNCTIONAL_LIST=("cleaned_reads" "prodigal_outputs" "sample_map.csv.gz")
+TAXONOMY_LIST=("gtdb_input_all_bins" "BAT_classification" "taxonomy_gtdb" "filtered_bins_high_quality")
 
 # --- MAIN EXECUTION ---
 echo "=== Starting Organization and Compression ==="
@@ -27,7 +27,7 @@ else
 fi
 
 # 3. Process Queues (fila_*)
-for queue_path in "$INPUT_DIR"/fila_*; do
+for queue_path in "$INPUT_DIR"; do
     queue_name=$(basename "$queue_path")
     echo "Processing: $queue_name"
 
@@ -59,3 +59,5 @@ for queue_path in "$INPUT_DIR"/fila_*; do
 done
 
 echo "=== Done! Output saved to: $OUTPUT_DIR ==="
+
+tar -czf "$BASE_DIR/ORGANIZED_RESULTS_PRJNA46333.tar.gz" -C "$BASE_DIR" "$(basename "$OUTPUT_DIR")"

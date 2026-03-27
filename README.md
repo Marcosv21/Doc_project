@@ -12,6 +12,8 @@ To calculate the parameters `-m` (minimum) and `-M` (maximum), use the following
 
 > **Overlap = (2 × Reads) - Fragment**
 
+The minimum overlap (`-m`) is value between 10 or 20 bp, while the maximum overlap (`-M`) is determined by the calculated Overlap.
+
 ### How to obtain the values:
 
 1.  **Read Length:** Use the `zcat` command to inspect the raw file:

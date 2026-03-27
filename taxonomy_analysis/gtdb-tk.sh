@@ -5,7 +5,7 @@
 eval "$(conda shell.bash hook)"
 conda activate gtdbtk
 
-SOURCE_BINS_DIR="/home/marcos/PRJEB59406/MetaBAT2_bins"
+SOURCE_BINS_DIR="/home/marcos/PRJEB59406/filtered_bins_high_quality"
 INPUT_DIR="/home/marcos/PRJEB59406/gtdb_input_all_bins"
 OUTPUT_DIR="/home/marcos/PRJEB59406/taxonomy_gtdb"
 
