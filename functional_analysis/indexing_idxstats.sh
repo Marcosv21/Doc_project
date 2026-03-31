@@ -2,11 +2,11 @@
 
 # Activate environment
 eval "$(conda shell.bash hook)"
-conda activate bowtie2
+conda activate Bowtie2
 
 # Define paths
-INPUT_DIR="/temporario2/17404478/PRJEB59406/filas_processamento/fila_1/fna_reads_aligned"
-OUTPUT_DIR="/temporario2/17404478/PRJEB59406/filas_processamento/fila_1/idxstats"
+INPUT_DIR="/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/functional/fna_reads_aligned"
+OUTPUT_DIR="/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/functional/idxstats"
 
 mkdir -p "$OUTPUT_DIR"
 

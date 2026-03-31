@@ -6,12 +6,12 @@
 eval "$(conda shell.bash hook)"
 conda activate diamond
 # Define working directory
-dir="/home/marcos/PRJEB59406/prodigal_outputs"
+dir="/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/assay/assay_data/assay/prodigal_outputs"
 #define output directory
-out_dir="/home/marcos/PRJEB59406/diamond_results"
+out_dir="/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/functional/diamond_results"
 mkdir -p "$out_dir"
 # Define Diamond database path
-db="/temporario2/17404478/PRJEB59406/code/data_base/pathway_db/db/sialic_acid_pathway.dmnd"  # DIAMOND database
+db="/home/marcos/marcos/data_base/sialic_acid_pathway.dmnd"  # DIAMOND database
 
 # Loop to process all .faa files in the directory
 for query in $dir/*.faa; do

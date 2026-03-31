@@ -9,8 +9,8 @@ columns = [
 ]
 
 # Define input and output directories
-INPUT_DIR = "/media/marcos/TRABALHO/PRJEB59406/functional/diamond_results/diamond_results"
-OUTPUT_DIR = "/media/marcos/TRABALHO/PRJEB59406/functional/diamond_results_filtrados_whithoutqlen_slen"
+INPUT_DIR = "/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/functional/diamond_results"
+OUTPUT_DIR = "/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/functional/diamond_results_filtrados_whithout"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Get list of TSV files in the input directory
@@ -48,8 +48,8 @@ for arc in document:
             (df['pident'] >= 40) &
             (df['evalue'] <= 1e-4) &
             (df['cobertura'] >= 0.5) &
-            #(df['qlen/slen'] >= 0.5) &
-            #(df['qlen/slen'] <= 1.5) &
+            (df['qlen/slen'] >= 0.5) &
+            (df['qlen/slen'] <= 1.5) &
             (df['bitscore'] >= 50)
         )
         

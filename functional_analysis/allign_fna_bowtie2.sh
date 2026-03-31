@@ -5,12 +5,12 @@
 
 # Activate the Conda environment -- if need be
 eval "$(conda shell.bash hook)"
-conda activate bowtie2
+conda activate Bowtie2
 
 # Define paths
-FASTQ_PATH="/home/marcos/PRJEB59406/cleaned_reads"
-INDEX_PATH="/home/marcos/PRJEB59406/indexed_fna"
-OUTPUT_PATH="/home/marcos/PRJEB59406/fna_reads_aligned"
+FASTQ_PATH="/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/assay/assay_data/assay/cleaned_reads"
+INDEX_PATH="/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/functional/indexed_fnaw"
+OUTPUT_PATH="/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/functional/fna_reads_alignedw"
 
 # Create the output directory if it doesn't exist
 mkdir -p $OUTPUT_PATH
@@ -29,7 +29,7 @@ for FILE1 in "$FASTQ_PATH"/*_filtered_aligned_R1.fastq; do
     bowtie2 -x "$INDEX_FILE" \
       -1 "$FILE1" \
       -2 "$FILE2" \
-      --threads 8 \
+      --threads 5 \
       -S "$OUTPUT_PATH/${BASENAME}_aligned_fna.sam"
       # -x: path to the genome index
       # -1: input read1

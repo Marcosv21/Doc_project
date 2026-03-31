@@ -3,7 +3,7 @@ import pandas as pd
 import glob
 import numpy as np
 
-BASE_PATH = "/home/marcos/PRJNA46333/ORGANIZED_RESULTS_PRJNA46333"
+BASE_PATH = "/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681"
 FUNCTIONAL_DIR = os.path.join(BASE_PATH, "functional")
 
 OUTPUT_COUNTS = os.path.join(FUNCTIONAL_DIR, "matrix_counts.tsv") #DESeq2
@@ -73,7 +73,7 @@ def calculate_tpm(df):
 
 all_long = []
 
-queue_dirs = glob.glob(os.path.join(FUNCTIONAL_DIR, "assay")) #queue_dirs = glob.glob(os.path.join(FUNCTIONAL_DIR, "fila_*"))
+queue_dirs = glob.glob(os.path.join(FUNCTIONAL_DIR)) #queue_dirs = glob.glob(os.path.join(FUNCTIONAL_DIR, "fila_*"))
 
 for queue_path in sorted(queue_dirs):
 

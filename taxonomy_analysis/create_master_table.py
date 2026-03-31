@@ -4,9 +4,9 @@ import glob
 import re
 
 # Configuration
-GTDB_DIR = "/home/marcos/PRJNA46333/ORGANIZED_RESULTS_PRJNA46333/taxonomy/assay/taxonomy_gtdb"
-DIAMOND_DIR = "/home/marcos/PRJNA46333/ORGANIZED_RESULTS_PRJNA46333/taxonomy/assay/mag_annotation/diamond_matches"
-OUTPUT_FILE = "/home/marcos/PRJNA46333/ORGANIZED_RESULTS_PRJNA46333/taxonomy/master_table_mag_sialidase_gtdb.csv"
+GTDB_DIR = "/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/taxonomy/fila_*/taxonomy_gtdb"
+DIAMOND_DIR = "/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/taxonomy/mag_annotation/diamond_matches"
+OUTPUT_FILE = "/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/taxonomy/master_table_mag_sialidase_gtdb.csv"
 
 def parse_taxonomy(tax_string):
     """Splits the GTDB string into clean Phylum, Genus, and Species."""

@@ -5,9 +5,9 @@ import glob
 import os
 
 # Define directories
-DIR_TSV_FILTRED = "/home/marcos/PRJEB59406/diamond_results_filtrados"
-DIR_FASTA = "/home/marcos/PRJEB59406/prodigal_outputs"
-DIR_OUTPUT = "/home/marcos/PRJEB59406/filtered_fna"
+DIR_TSV_FILTRED = "/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/functional/diamond_results_filtrados_whithoutqlen_slen"
+DIR_FASTA = "/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/assay/assay_data/assay/prodigal_outputs"
+DIR_OUTPUT = "/home/marcos/PRJNA489681/ORGANIZED_RESULTS_PRJNA489681/functional/filtered_fnaw"
 os.makedirs(DIR_OUTPUT, exist_ok=True)
 # Get list of filtered TSV files
 tsv_archives = glob.glob(os.path.join(DIR_TSV_FILTRED, "*.tsv"))
