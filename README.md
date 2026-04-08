@@ -60,13 +60,13 @@ graph TD
         Tax3 --> Tax4[metabat2.sh]:::shell
         Tax4 --> Tax5[checkm.sh]:::shell
         Tax5 --> Tax6[filtered_checkm.py]:::python
-        Tax6 --> Tax7[CoverM.sh]:::shell
+        
         
         
         %% Caminho 1: GTDB (Padrão)
-        Tax7 --> Tax8[gtdb-tk.sh]:::shell
-        Tax8 --> Tax9[mag_functional_screening.sh]:::shell
-        Tax9 --> Tax10[create_master_table.py]:::python
+        Tax6 --> Tax7[gtdb-tk.sh]:::shell
+        Tax7 --> Tax8[mag_functional_screening.sh]:::shell
+        Tax8 --> Tax9[create_master_table.py]:::python
 
         %% Caminho 2: BAT/CAT (Validação)
         Tax6 --> TaxBAT1[run_bat_pipeline.sh]:::shell
@@ -124,7 +124,7 @@ The pipeline follows this specific sequence:
 5. **Quality & Standard Classification:**
 * `checkm.sh` (Quality Assessment)
 * `filtered_checkm.py` (Quality Filtering)
-* `CoverM.sh` (Abundance Estimation)
+* `CoverM.sh` (Coverage Calculation)
 * `gtdb-tk.sh` (Taxonomic Classification)
 
 
