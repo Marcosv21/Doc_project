@@ -5,7 +5,7 @@
 eval "$(conda shell.bash hook)"
 
 # 3. Activate environment
-echo "activate env megahit..."
+echo "activate megahit..."
 conda activate megahit
 
 FASTQ_PATH="/temporario2/17404478/PRJEB59406/cleaned_reads" 
@@ -29,7 +29,7 @@ for FILE1 in "$FASTQ_PATH"/*_R1.fastq; do
   DIR_NAME="${OUTPUT_PATH}/${BASENAME}"
   
   # Check if assembly already exists
-  if [ -f "DIR_NAME/contigs.fa"]; then
+  if [ -f "$DIR_NAME/contigs.fa"]; then
     echo "Assembly already exists for $BASENAME, skipping..."
     continue
   fi
@@ -40,7 +40,7 @@ for FILE1 in "$FASTQ_PATH"/*_R1.fastq; do
     rm -rf "$DIR_NAME"
   fi
   #Assembling with MEGAHIT
-  megahit -1 "$FILE1" -2 "$FILE2" -r "$FILE3" -o "$OUTPUT_PATH/${BASENAME}" -m 0.8 -t 20
+  megahit -1 "$FILE1" -2 "$FILE2" -r "$FILE3" -o "$OUTPUT_PATH/${BASENAME}" -m 0.8 -t 20 --min-contig-len 1000
   # -1: input read1
   # -2: input read2
   # -r: input merged reads

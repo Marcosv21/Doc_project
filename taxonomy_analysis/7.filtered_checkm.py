@@ -4,9 +4,9 @@ import shutil
 import glob
 
 
-CHECKM_DIR = "/home/marcos/PRJEB59406/checkm_results"
-BINS_DIR = "/home/marcos/PRJEB59406/MetaBAT2_bins"
-OUTPUT_DIR = "/home/marcos/PRJEB59406/filtered_bins_high_quality"
+CHECKM_DIR = "/temporario2/17404478/PRJNA46333/checkm_results_semibin2"
+BINS_DIR = "/temporario2/17404478/PRJNA46333/assay/semibin2/final_bins"
+OUTPUT_DIR = "/temporario2/17404478/PRJNA46333/filtered_bins_high_quality_semibin2"
 
 # Quality Thresholds (MIMAG Medium)
 #If you want High Quality bins, set MIN_COMP = 90.0 and MAX_CONT = 5.0. High quality bins are suitable for most downstream analyses.

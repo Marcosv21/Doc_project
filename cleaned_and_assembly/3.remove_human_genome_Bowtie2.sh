@@ -7,7 +7,7 @@
 eval "$(conda shell.bash hook)"
 
 # Activate environment
-echo "Activating env samtools..."
+echo "Activating samtools..."
 conda activate samtools
 # Define paths
 INPUT_DIR="/home/marcos/PRJEB59406/bowtie2_aligned"

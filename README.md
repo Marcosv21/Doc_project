@@ -35,6 +35,7 @@ graph TD
     classDef python fill:#fff9c4,stroke:#fbc02d,stroke-width:2px,color:#000000;
     classDef ipynb fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#000000;
     classDef start fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,stroke-dasharray: 5 5,color:#000000;
+    classDef refinement fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000000;
 
     %% Start Node
     Input(Raw FASTQ Data):::start --> Clean1
@@ -48,31 +49,28 @@ graph TD
         Clean4 --> Clean5[megahit.sh]:::shell
     end
 
-    %% Fork: Assembly output goes to BOTH Functional and Taxonomy
+    %% Fork
     Clean5 --> Func1
     Clean5 --> Tax1
 
-    %% --- 2. TAXONOMY ANALYSIS ---
-    subgraph Taxonomy ["2. Taxonomy Analysis"]
+    %% --- 2. TAXONOMY & BIN REFINEMENT ---
+    subgraph Taxonomy ["2. Taxonomy & Bin Refinement"]
         direction TB
         Tax1[indexing_contigs.sh]:::shell --> Tax2[align_contigs_read.sh]:::shell
         Tax2 --> Tax3[ordering_bam.sh]:::shell
-        Tax3 --> Tax4[metabat2.sh]:::shell
-        Tax4 --> Tax5[checkm.sh]:::shell
-        Tax5 --> Tax6[filtered_checkm.py]:::python
         
+        %% Multi-Binning
+        Tax3 --> Bin1[metabat2.sh]:::shell
+        Tax3 --> Bin2[semibin2.sh]:::shell
         
+        %% Refinement
+        Bin1 --> Refine[MAGScoT.R]:::refinement
+        Bin2 --> Refine
         
-        %% Caminho 1: GTDB (Padrão)
-        Tax6 --> Tax7[gtdb-tk.sh]:::shell
+        Refine --> Tax5[checkm2.sh]:::shell
+        Tax5 --> Tax7[gtdb-tk.sh]:::shell
         Tax7 --> Tax8[mag_functional_screening.sh]:::shell
         Tax8 --> Tax9[create_master_table.py]:::python
-
-        %% Caminho 2: BAT/CAT (Validação)
-        Tax6 --> TaxBAT1[run_bat_pipeline.sh]:::shell
-        TaxBAT1 --> TaxBAT2[mag_functional_screening.sh]:::shell
-        TaxBAT2 --> TaxBAT3[merge_bat_results.py]:::python
-        TaxBAT2 --> Tax9[create_master_table.py]:::python
     end
 
     %% --- 3. FUNCTIONAL ANALYSIS ---
@@ -89,14 +87,8 @@ graph TD
     %% --- 4. STATISTICAL ANALYSIS ---
     subgraph Stats ["4. Statistical Analysis"]
         direction TB
-        %% Functional result -> plots.ipynb
         Func7 --> Stat1(plots.ipynb):::ipynb
-        
-        %% Taxonomy result -> plots_taxonomy.ipynb
         Tax9 --> Stat2(plots_taxonomy.ipynb):::ipynb
-        
-        %% BAT result -> plots_taxonomy.ipynb (Pontilhado para indicar suporte)
-        TaxBAT3 -.-> Stat2
     end
 
 ```
@@ -107,7 +99,7 @@ graph TD
 
 ### 2. Cleaning and Assembly
 
-The pipeline follows this specific sequence:
+The pipeline quality-controls and decontaminates reads before assembly.:
 
 1. `fastp.sh` (Quality Control)
 2. `align_reads_human_genome_Bowtie2.sh` (Host Alignment)
@@ -117,15 +109,11 @@ The pipeline follows this specific sequence:
 
 ### 3. Taxonomy Analysis
 
-1. `indexing_contigs.sh` (Contig Indexing)
-2. `align_contigs_read.sh` (Map Reads for Coverage)
-3. `ordering_bam.sh` (BAM Sorting)
-4. `metabat2.sh` (Binning)
-5. **Quality & Standard Classification:**
-* `checkm.sh` (Quality Assessment)
-* `filtered_checkm.py` (Quality Filtering)
-* `CoverM.sh` (Coverage Calculation)
-* `gtdb-tk.sh` (Taxonomic Classification)
+1. **Mapping:** `indexing_contigs.sh` (Index Building), `align_contigs_read.sh` (Alignment), `ordering_bam.sh` (BAM Sorting)
+2. **Binning:** `metabat2.sh` (MetaBAT2 Binning), `semibin2.sh` (SemiBin2 Binning)
+3. **Refinement:** `MAGScoT.R` (Bin Refinement)
+4. **Quality Assessment:** `checkm2.sh` (CheckM2)
+5. **Taxonomic Classification:** `gtdb-tk.sh` (GTDB-Tk) 
 
 
 6. **Validation & Contamination Check (CAT/BAT):**
