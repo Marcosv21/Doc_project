@@ -61,6 +61,7 @@ graph TD
         %% Refinement
         Bin1 --> Refine[MAGScoT.R]:::refinement
         Bin2 --> Refine
+        Bin3 --> Refine
         
         Refine --> Tax5[checkm2.sh]:::shell
         Tax5 --> Tax7[gtdb-tk.sh]:::shell
