@@ -1,21 +1,10 @@
 #!/bin/bash
 
-# --- CONFIGURATION ---
-TARGET_DIR="/temporario2/17404478/PRJEB59406/filas_processamento/fila_/fastq_files"
+TARGET_DIR="/temporario2/17404478/PRJEB59406/assay_1/fastq_files"
+URL_FILE="/temporario2/17404478/PRJEB59406/get_ena_PRJEB59406.sh" 
 
-echo "Creating directory: $TARGET_DIR"
 mkdir -p "$TARGET_DIR"
+cd "$TARGET_DIR"
+bash "$URL_FILE"
 
-URLS=(
-    # Insert your URLs here
-)
-
-# --- DOWNLOAD PROCESS ---
-echo "Starting downloads into fila..."
-
-for url in "${URLS[@]}"; do
-    echo "Downloading: $(basename "$url")"
-    wget -nc -P "$TARGET_DIR" "$url"
-done
-
-echo "Downloads completed!"
+echo "Files downloaded: $(ls *.fastq.gz 2>/dev/null | wc -l)"

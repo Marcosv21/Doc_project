@@ -3,13 +3,13 @@
 eval "$(conda shell.bash hook)"
 conda activate checkm
 
-BASE_DIR="/temporario2/17404478/PRJNA46333/assay/semibin2/final_bins"
-OUT_BASE="/temporario2/17404478/PRJNA46333/checkm_results_semibin2"
+BASE_DIR="/temporario2/17404478/PRJNA46333_2/assay/semibin2/final_bins"
+OUT_BASE="/temporario2/17404478/PRJNA46333_2/checkm_results_semibin2"
 
 mkdir -p "$OUT_BASE"
 
 echo "Starting CheckM Pipeline for SemiBin2..."
-for SAMPLE_PATH in "$BASE_DIR"/SRR*; do
+for SAMPLE_PATH in "$BASE_DIR"/*; do
     [ -d "$SAMPLE_PATH" ] || continue
     SAMPLE_NAME=$(basename "$SAMPLE_PATH")
     BIN_SUBDIR="$SAMPLE_PATH/output_bins"

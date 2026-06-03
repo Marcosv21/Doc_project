@@ -6,15 +6,15 @@ eval "$(conda shell.bash hook)"
 conda activate metabat2
 
 # Directories
-MEGAHIT_DIR="/home/marcos/PRJEB59406/megahit_assemblies"
-BAM_DIR="/home/marcos/PRJEB59406/ordened_bams"
-OUTPUT_DIR="/home/marcos/PRJEB59406/MetaBAT2_bins"
+MEGAHIT_DIR="/temporario2/17404478/PRJNA46333_2/assay/megahit_assemblies"
+BAM_DIR="/temporario2/17404478/PRJNA46333_2/assay/ordened_bams"
+OUTPUT_DIR="/temporario2/17404478/PRJNA46333_2/assay/MetaBAT2_bins"
 
 # Create the output directory
 mkdir -p "$OUTPUT_DIR"
 
 # Loop through samples
-for SAMPLE_DIR in "$MEGAHIT_DIR"/ERR*; do
+for SAMPLE_DIR in "$MEGAHIT_DIR"/*; do
     SAMPLE_NAME=$(basename "$SAMPLE_DIR")
     
     # MegaHIT standard output filename

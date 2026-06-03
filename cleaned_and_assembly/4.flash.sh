@@ -8,8 +8,8 @@ eval "$(conda shell.bash hook)"
 # Activate the Conda environment -- if need be
 conda activate flash
 
-FASTQ_PATH="/home/marcos/PRJEB59406/cleaned_reads" 
-OUTPUT_PATH="/home/marcos/PRJEB59406/merged_reads" 
+FASTQ_PATH="/home/marcos/PRJNA46333/cleaned_reads" 
+OUTPUT_PATH="/home/marcos/PRJNA46333/merged_reads" 
 
 mkdir -p "$OUTPUT_PATH"
 

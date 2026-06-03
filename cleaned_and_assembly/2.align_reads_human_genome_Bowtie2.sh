@@ -1,40 +1,43 @@
 #!/bin/bash
-# Dependencies: Bowtie2
+# Dependencies: Bowtie2, samtools
 # Install:
-#   conda install -c bioconda bowtie2
-
-# Activate the Conda environment -- if need be
+#   conda install -c bioconda bowtie2 samtools
 eval "$(conda shell.bash hook)"
 conda activate bowtie2
 
-# Define paths
-FASTQ_PATH="/home/marcos/PRJEB59406/fastp_filtered"
-GENOME_INDEX_PATH="/home/marcos/human_genome/GRCh38_index"
-OUTPUT_PATH="/home/marcos/PRJEB59406/bowtie2_aligned"
+FASTQ_PATH="/temporario2/17404478/PRJNA46333_2/assay/fastp_filtered"
+GENOME_INDEX_PATH="/temporario2/17404478/code/data_base/human_genome/GRCh38_index"
+OUTPUT_PATH="/temporario2/17404478/PRJNA46333_2/assay/bowtie2_aligned"
 
-# Create the output directory if it doesn't exist
-mkdir -p $OUTPUT_PATH
+mkdir -p "$OUTPUT_PATH"
 
-# Loop through all *_1.fastq.gz files in the FASTQ_PATH
-for FILE1 in $FASTQ_PATH/*_1.fastq.gz; do
-  # Get the base name of the sample (without the _1.fastq.gz suffix)
-  BASENAME=$(basename $FILE1 _1.fastq.gz)
-  
-  # Define the corresponding file for the _2.fastq.gz pair
-  FILE2="${FASTQ_PATH}/${BASENAME}_2.fastq.gz"
+for FILE1 in "$FASTQ_PATH"/*_filtered_1.fastq.gz; do
+  BASENAME=$(basename "$FILE1" "_filtered_1.fastq.gz")
+  FILE2="${FASTQ_PATH}/${BASENAME}_filtered_2.fastq.gz"
+  FILE_MERGED="${FASTQ_PATH}/${BASENAME}_merged.fastq.gz"
 
-  # Alignment with Bowtie2
-  bowtie2 -x $GENOME_INDEX_PATH \
-    -1 $FILE1 \
-    -2 $FILE2 \
+  echo "Processing: $BASENAME"
+
+  # Paired-end — Filtered by Bowtie2 directly, then sorted and converted to BAM
+  bowtie2 -x "$GENOME_INDEX_PATH" \
+    -1 "$FILE1" \
+    -2 "$FILE2" \
     --threads 8 \
-    -S $OUTPUT_PATH/${BASENAME}_aligned.sam
-  # -x: path to the genome index
-  # -1: input read1
-  # -2: input read2
-  # --threads: number of threads
-  # -S: output SAM file
+    --very-sensitive \
+    --no-mixed \
+    --no-discordant \
+    2> "$OUTPUT_PATH/${BASENAME}_paired.log" \
+  | samtools view -@ 8 -b -f 12 -F 256 \
+  | samtools sort -n -@ 8 \
+    -o "$OUTPUT_PATH/${BASENAME}_filtered.bam"
+# -x: path to the Bowtie2 index (without the .bt2 extension)
+# -1: forward reads
+# -2: reverse reads
+# --threads: number of threads to use
+# --very-sensitive: preset for high sensitivity
+# --no-mixed: only report paired alignments (no singletons)
+# --no-discordant: only report concordant alignments (no discordant pairs)
+# 2>: redirect Bowtie2's stderr to a log file for troubleshooting
 
+  echo "Done: $BASENAME"
 done
-
-# NOTE: Bowtie2 generates a single output file containing the alignment of both sequences (forward and reverse).

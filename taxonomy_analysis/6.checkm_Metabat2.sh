@@ -6,14 +6,14 @@ eval "$(conda shell.bash hook)"
 conda activate checkm
 
 # Paths
-BASE_DIR="/home/marcos/PRJEB59406/MetaBAT2_bins"
-OUT_BASE="/home/marcos/PRJEB59406/checkm_results"
+BASE_DIR="/temporario2/17404478/PRJNA46333_2/assay/MetaBAT2_bins"
+OUT_BASE="/temporario2/17404478/PRJNA46333_2/checkm_results_metabat2"
 mkdir -p "$OUT_BASE"
 
 echo "Starting CheckM Pipeline..."
 
 # Iterate through samples
-for SAMPLE_PATH in "$BASE_DIR"/ERR*; do
+for SAMPLE_PATH in "$BASE_DIR"/*; do
     # Skip if not a directory
     [ -d "$SAMPLE_PATH" ] || continue
     

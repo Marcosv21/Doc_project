@@ -1,44 +1,48 @@
 #!/bin/bash
-# Dependencies: Samtools
+# Dependencies: samtools
 # Install:
 #   conda install -c bioconda samtools
-# 1. Start Conda environment initialization
-
 eval "$(conda shell.bash hook)"
-
-# Activate environment
-echo "Activating samtools..."
 conda activate samtools
-# Define paths
-INPUT_DIR="/home/marcos/PRJEB59406/bowtie2_aligned"
-OUTPUT_DIR="/home/marcos/PRJEB59406/cleaned_reads"
-# Create output directory if it does not exist
-mkdir -p "$OUTPUT_DIR"
-# Processing
-for SAM_FILE in "$INPUT_DIR"/*.sam; do
-  BASENAME=$(basename "$SAM_FILE" .sam)
 
-  echo "Processing archive: ${BASENAME}.sam"
-  
-  # Convert and filter SAM -> BAM
-  samtools view -@ 8 -b -f 12 -F 256 "$SAM_FILE" > "$OUTPUT_DIR/${BASENAME}_filtered.bam" 
-  # @8: number of threads
-  # -b: output in BAM format
-  # -f 12: include reads with flags 4 (unmapped) and 8 (mate unmapped).
-  # -F 256: exclude reads with flag 256 (not primary alignment).
-  # Filter options: -f: Have a all flags present, -F : Anything flags present.
+INPUT_DIR="/temporario2/17404478/PRJNA46333_2/assay/bowtie2_aligned"
+OUTPUT_DIR="/temporario2/17404478/PRJNA46333_2/assay/cleaned_reads"
+TEMP_DIR="$OUTPUT_DIR/tmp"
 
-  # Convert BAM to FASTQ
-  samtools fastq -@ 8 -1 "$OUTPUT_DIR/${BASENAME}_R1.fastq" -2 "$OUTPUT_DIR/${BASENAME}_R2.fastq" "$OUTPUT_DIR/${BASENAME}_filtered.bam"
-  # -1: output read1
-  # -2: output read2
-  # -@ 8: number of threads
-  
-  echo " ${BASENAME}_R1.fastq and ${BASENAME}_R2.fastq creates."
+mkdir -p "$OUTPUT_DIR" "$TEMP_DIR"
 
-  # Remove intermediate file (optional)
-  rm "$OUTPUT_DIR/${BASENAME}_filtered.bam"
+for BAM_FILE in "$INPUT_DIR"/*_filtered.bam; do
+  BASENAME=$(basename "$BAM_FILE" _filtered.bam)
+
+  echo "Processing: $BASENAME"
+
+  # Extract reads that did not align to the human genome
+  samtools view -@ 8 -b -f 12 -F 256 "$BAM_FILE" > "$TEMP_DIR/${BASENAME}_both.bam"
+  samtools view -@ 8 -b -f 4  -F 264 "$BAM_FILE" > "$TEMP_DIR/${BASENAME}_r1.bam"
+  samtools view -@ 8 -b -f 8  -F 260 "$BAM_FILE" > "$TEMP_DIR/${BASENAME}_r2.bam"
+
+  samtools merge -f -@ 8 "$TEMP_DIR/${BASENAME}_merged.bam" \
+    "$TEMP_DIR/${BASENAME}_both.bam" \
+    "$TEMP_DIR/${BASENAME}_r1.bam" \
+    "$TEMP_DIR/${BASENAME}_r2.bam"
+
+  # Ordened by name for paired-end conversion
+  samtools sort -n -@ 8 "$TEMP_DIR/${BASENAME}_merged.bam" \
+    -o "$TEMP_DIR/${BASENAME}_sorted.bam"
+
+  # Convert to FASTQ, separating paired-end, singletons, and others
+  samtools fastq -@ 8 \
+    -1 "$OUTPUT_DIR/${BASENAME}_R1.fastq" \
+    -2 "$OUTPUT_DIR/${BASENAME}_R2.fastq" \
+    -s "$OUTPUT_DIR/${BASENAME}_singleton.fastq" \
+    -0 "$OUTPUT_DIR/${BASENAME}_other.fastq" \
+    -n \
+    "$TEMP_DIR/${BASENAME}_sorted.bam"
+
+  # Clean up temporary BAM files
+  rm "$TEMP_DIR/${BASENAME}"_*.bam
+  echo "Done: $BASENAME"
 done
 
-echo ""
-echo "Finished processing all files!"
+rm -rf "$TEMP_DIR"
+echo "All samples processed!"

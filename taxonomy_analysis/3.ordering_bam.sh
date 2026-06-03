@@ -8,9 +8,9 @@ eval "$(conda shell.bash hook)"
 conda activate samtools
 
 # Path to the folder containing .sam files
-SAM_DIR="/home/marcos/PRJEB59406/contigs_reads_aligned"
+SAM_DIR="/temporario2/17404478/PRJNA46333_2/assay/contigs_reads_aligned"
 # Path to save the sorted .bam files
-OUTPUT_DIR="/home/marcos/PRJEB59406/ordened_bams"
+OUTPUT_DIR="/temporario2/17404478/PRJNA46333_2/assay/ordened_bams"
 
 mkdir -p $OUTPUT_DIR
 
@@ -38,7 +38,7 @@ for SAM_FILE in $SAM_DIR/*.sam; do
     samtools sort "$BAM_FILE" -o "$SORTED_BAM"
     if [ $? -eq 0 ]; then
         echo "Removing intermediate BAM file $BAM_FILE..."
-        rm -f "$BAM_FILE"
+
     else
         echo "Error sorting $BAM_FILE. Keeping the file for debugging."
     fi

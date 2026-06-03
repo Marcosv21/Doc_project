@@ -6,12 +6,7 @@ conda activate semibin
 # =========================
 # CONFIG
 # =========================
-# For PRJNA46333:
-# BASE_DIR="/temporario2/17404478/PRJNA46333/assay"
-# For PRJEB59406:
-# BASE_DIR="/temporario2/17404478/PRJEB59406/filas_processamento"
-# For PRJNA489681:
-BASE_DIR="/temporario2/17404478/PRJNA489681/filas_processamento"
+BASE_DIR="/temporario2/17404478/PRJNA46333_2/assay"
 OUTPUT_DIR="$BASE_DIR/semibin2"
 BAM_DIR="$OUTPUT_DIR/realigned_bams"
 TEMP_LINKS="$OUTPUT_DIR/temp_links"
@@ -21,7 +16,7 @@ FINAL_DIR="$OUTPUT_DIR/final_bins"
 
 MIN_READS=1000000
 THREADS=12
-MIN_CONTIG=2500
+MIN_CONTIG=1500
 
 TOTAL_SAMPLES=0
 VALID_SAMPLES=0
@@ -36,10 +31,9 @@ mkdir -p "$BAM_DIR" "$TEMP_LINKS" "$FEATURE_DIR" "$MODEL_DIR" "$FINAL_DIR"
 echo "Step 1: Preparing FASTA..."
 
 rm -f "$TEMP_LINKS"/*.fa
-for FOLDER in $BASE_DIR/fila_0*/megahit_assemblies/SRR*; do
+for FOLDER in $BASE_DIR/megahit_assemblies/*; do
     if [ -f "$FOLDER/final.contigs.fa" ]; then
         SAMPLE=$(basename "$FOLDER")
-        # FIX: filtrar contigs < 1000 bp antes de concatenar
         seqkit seq -m $MIN_CONTIG "$FOLDER/final.contigs.fa" > "$TEMP_LINKS/${SAMPLE}.fa"
 
         N_CONTIGS=$(grep -c ">" "$TEMP_LINKS/${SAMPLE}.fa" 2>/dev/null || echo 0)
@@ -68,12 +62,12 @@ bowtie2-build "$FINAL_FASTA" "$OUTPUT_DIR/idx"
 echo "Step 3: Mapping..."
 
 VALID_BAMS=""
-for FOLDER in $BASE_DIR/fila_0*/megahit_assemblies/SRR*; do
+for FOLDER in $BASE_DIR/megahit_assemblies/*; do
     SAMPLE=$(basename "$FOLDER")
     READ_DIR=$(dirname "$FOLDER")/../cleaned_reads
 
-    R1="$READ_DIR/${SAMPLE}_filtered_aligned_R1.fastq"
-    R2="$READ_DIR/${SAMPLE}_filtered_aligned_R2.fastq"
+    R1="$READ_DIR/${SAMPLE}_R1.fastq"
+    R2="$READ_DIR/${SAMPLE}_R2.fastq"
 
     if [[ -f "$R1" && -f "$R2" ]]; then
         echo "Mapping $SAMPLE..."
@@ -135,7 +129,7 @@ for SAMPLE_PATH in "$FEATURE_DIR"/samples/*/; do
                 --data "$DATA" \
                 --data-split "$SPLIT" \
                 --output "$MODEL_DIR/$SAMPLE" \
-                --epochs 20
+                --epochs 30
 
         else
             echo "Ignoring $SAMPLE (data.csv empty or insufficient)"

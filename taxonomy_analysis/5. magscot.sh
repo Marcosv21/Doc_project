@@ -16,150 +16,150 @@ conda activate magscott_env
 # =========================
 # PATHS
 # =========================
-# For PRJNA46333:
-BASE="/temporario2/17404478/PRJNA46333"
+BASE="/temporario2/17404478/PRJNA46333_2"
 ASSEMBLY_DIR="$BASE/assay"
 WORKDIR="$BASE/magscot"
-# For PRJEB59406:
-# BASE="/temporario2/17404478/PRJEB59406"
-# ASSEMBLY_DIR="$BASE/filas_processamento"
-# WORKDIR="$BASE/magscot"
-# For PRJNA489681:
-#BASE="/temporario2/17404478/PRJNA489681"
-#ASSEMBLY_DIR="$BASE/filas_processamento"
-#WORKDIR="$BASE/magscot"
 MAGSCOT_SCRIPT="/temporario2/17404478/code/taxonomy_functions/MAGScoT/MAGScoT.R"
 HMM_SOURCE="/temporario2/17404478/code/taxonomy_functions/MAGScoT/hmm"
 
 mkdir -p "$WORKDIR"
 CONCAT_FASTA="$WORKDIR/all_contigs.fa"
-# =========================================================
-# STEP 0 — CHECK DEPENDENCIES
-# =========================================================
+
+# =========================
+# STEP 0 — DEPENDÊNCIAS
+# =========================
 echo "Checking R packages..."
-Rscript -e "libs<-c('digest','funr','optparse','dplyr','tidyr','readr'); lapply(libs, function(x) if(!require(x,character.only=T)) stop(paste('Falta o pacote:',x)))"
+Rscript -e "libs<-c('digest','funr','optparse','dplyr','tidyr','readr'); \
+    lapply(libs, function(x) if(!require(x,character.only=T)) \
+    stop(paste('Missing package:',x)))"
 
 # =========================
-# STEP 1 — CONCATENATE
+# STEP 1 — CONCATENAR CONTIGS
 # =========================
-echo "Concating contigs from all samples..."
-# For PRJNA46333:
+echo "Step 1: Concatenating contigs..."
 > "$CONCAT_FASTA"
-for f in $ASSEMBLY_DIR/megahit_assemblies/SRR*/final.contigs.fa; do
 
+for f in "$ASSEMBLY_DIR"/megahit_assemblies/*/final.contigs.fa; do
     sample=$(basename "$(dirname "$f")")
-
-    echo "Processing $sample"
-
+    echo "  Processing $sample"
     awk -v s="$sample" '
-    /^>/ {
-        print ">" s "_" substr($0,2)
-        next
-    }
-    {
-        print
-    }
-    ' "$f" | \
-    seqkit seq -m 2500 \
-    >> "$CONCAT_FASTA"
-
+        /^>/ { print ">" s "_" substr($0,2); next }
+        { print }
+    ' "$f" | seqkit seq -m 1500 >> "$CONCAT_FASTA"
 done
-# For PRJEB59406:
-# cat $ASSEMBLY_DIR/fila_*/megahit_assemblies/ERR*/final.contigs.fa > "$CONCAT_FASTA"
-# For PRJNA489681:  
-#cat $ASSEMBLY_DIR/fila_0*/megahit_assemblies/SRR*/final.contigs.fa > "$CONCAT_FASTA"
-echo "Preparing GTDB HMM markers..."
-# The MAGScoT requires the HMMs of the GTDB. You can get them from the GTDB website, 
-# but I already have them in a common path in the cluster. 
-# If you want to use them, just concatenate the Pfam and TIGRFAM files into one, like this:
-echo "Preparing GTDB HMM markers (Cleaning with hmmconvert)..."
-# Usando hmmconvert para garantir que o formato esteja perfeito para o HMMER 3.4
-hmmconvert "$HMM_SOURCE/gtdbtk_rel207_Pfam-A.hmm" > "$WORKDIR/Pfam_clean.hmm"
+
+N_CONTIGS=$(grep -c ">" "$CONCAT_FASTA")
+echo "  Total contigs: $N_CONTIGS"
+
+# =========================
+# STEP 2 — HMM MARKERS
+# =========================
+echo "Step 2: Preparing HMM markers..."
+hmmconvert "$HMM_SOURCE/gtdbtk_rel207_Pfam-A.hmm"  > "$WORKDIR/Pfam_clean.hmm"
 hmmconvert "$HMM_SOURCE/gtdbtk_rel207_tigrfam.hmm" > "$WORKDIR/Tigrfam_clean.hmm"
 cat "$WORKDIR/Pfam_clean.hmm" "$WORKDIR/Tigrfam_clean.hmm" > "$WORKDIR/bac120_markers.hmm"
-
-
-hmmstat "$WORKDIR/bac120_markers.hmm" | tail -n 5
+hmmstat "$WORKDIR/bac120_markers.hmm" | tail -n 3
 
 # =========================
-# STEP 2 — PRODIGAL (Protein prediction)
+# STEP 3 — PRODIGAL
 # =========================
-echo "Running prodigal..."
-prodigal -i "$CONCAT_FASTA" -a "$WORKDIR/proteins.faa" -p meta > /dev/null
+echo "Step 3: Running Prodigal..."
+prodigal \
+    -i "$CONCAT_FASTA" \
+    -a "$WORKDIR/proteins.faa" \
+    -p meta \
+    > /dev/null 2>&1
 
-
-# =========================
-# STEP 3 — HMMER (GTDB markers)
-# =========================
-echo "Running hmmsearch..."
-hmmsearch --tblout "$WORKDIR/markers.tsv" --cut_ga --cpu 12 \
-    "$WORKDIR/bac120_markers.hmm" "$WORKDIR/proteins.faa"
-
-# Formatação para o MAGScoT
-awk '!/^#/ {print $1"\t"$3"\t"$13}' "$WORKDIR/markers.tsv" > "$WORKDIR/magscot_hmm.tsv"
+echo "  Proteins predicted: $(grep -c ">" "$WORKDIR/proteins.faa")"
 
 # =========================
-# STEP 4 — Mapping bin-contig
+# STEP 4 — HMMER
 # =========================
-echo "Building bin-contig mapping for MetaBAT2 and SemiBin2..."
+echo "Step 4: Running hmmsearch..."
+hmmsearch \
+    --tblout "$WORKDIR/markers.tsv" \
+    --cut_ga \
+    --cpu 12 \
+    "$WORKDIR/bac120_markers.hmm" \
+    "$WORKDIR/proteins.faa"
+
+awk '!/^#/ {print $1"\t"$3"\t"$13}' "$WORKDIR/markers.tsv" \
+    > "$WORKDIR/magscot_hmm.tsv"
+
+echo "  HMM hits: $(wc -l < "$WORKDIR/magscot_hmm.tsv")"
+
+# =========================
+# STEP 5 — BIN-CONTIG MAPPING
+# =========================
+echo "Step 5: Building bin-contig mapping..."
 MAP_FILE="$WORKDIR/bin_mapping.tsv"
 > "$MAP_FILE"
 
-echo "   -> Colecting bins do MetaBAT2..."
-# For PRJNA46333:
-for f in $BASE/assay/MetaBAT2_bins/SRR*/final.contigs.fa.metabat-bins*/*.fa; do
-# For PRJEB59406:
-# for f in $BASE/filas_processamento/fila_*/MetaBAT2_bins/ERR*/final.contigs.fa.metabat-bins*/*.fa; do
-# For PRJNA489681:
-# for f in $BASE/filas_processamento/fila_*/MetaBAT2_bins/SRR*/final.contigs.fa.metabat-bins*/*.fa; do
-    if [ -f "$f" ]; then
-        bin_name=$(basename "$f" .fa)
-        
-        sample_dir=$(dirname $(dirname "$f"))
-        sample=$(basename "$sample_dir")
-        
-        grep "^>" "$f" | sed 's/^>//' | \
-        awk -v s="$sample" -v b="$bin_name" \
+# --- MetaBAT2 ---
+echo "  -> Collecting MetaBAT2 bins..."
+METABAT_COUNT=0
+for f in "$BASE"/assay/MetaBAT2_bins/*/final.contigs.fa.metabat-bins*/*.fa; do
+    [[ -f "$f" ]] || continue
+    bin_name=$(basename "$f" .fa)
+    sample=$(basename "$(dirname "$(dirname "$f")")")
+    grep "^>" "$f" | sed 's/^>//' | \
+    awk -v s="$sample" -v b="$bin_name" \
         '{print s"_"b"\t"s"_"$1"\tmetabat2"}' \
-        >> "$MAP_FILE"
-    fi
+    >> "$MAP_FILE"
+    ((METABAT_COUNT++))
 done
+echo "     MetaBAT2 bins: $METABAT_COUNT"
 
-echo "   -> Colecting bins do SemiBin2..."
-# For PRJNA46333:
-for d in $BASE/assay/semibin2/final_bins/SRR*; do
+# --- SemiBin2 ---
+echo "  -> Collecting SemiBin2 bins..."
+SEMIBIN_COUNT=0
+for d in "$BASE"/assay/semibin2/final_bins/*/; do
     sample=$(basename "$d")
-    if [ -f "$d/contig_bins.tsv" ]; then
-        awk -v s="$sample" \
+    [[ -f "$d/contig_bins.tsv" ]] || continue
+    awk -v s="$sample" \
         '{print s"_sb2_"$2"\t"s"_"$1"\tsemibin2"}' \
         "$d/contig_bins.tsv" >> "$MAP_FILE"
-    fi
+    ((SEMIBIN_COUNT++))
 done
-# For PRJEB59406 and PRJNA489681: (Switched SRR* for ERR* in PRJEB59406, but kept SRR* for PRJNA489681)
-#for d in $BASE/filas_processamento/semibin2_2/final_bins/SRR*; do
-#    sample=$(basename "$d")
-#    if [ -f "$d/contig_bins.tsv" ]; then
-#        awk -v s="$sample" '{print s"_sb2_"$2"\t"$1"\tsemibin2"}' "$d/contig_bins.tsv" >> "$MAP_FILE"
-#    fi
-# done
+echo "     SemiBin2 samples: $SEMIBIN_COUNT"
+
+# --- COMEBin ---
+echo "  -> Collecting COMEBin bins..."
+COMEBIN_COUNT=0
+for sample_dir in "$BASE"/assay/comebin_bins/*/; do
+    sample=$(basename "$sample_dir")
+    BIN_DIR="$sample_dir/comebin_res/comebin_res_bins"
+
+    [[ -d "$BIN_DIR" ]] || continue
+
+    for f in "$BIN_DIR"/*.fa; do
+        [[ -f "$f" ]] || continue
+        bin_name=$(basename "$f" .fa)
+        grep "^>" "$f" | sed 's/^>//' | \
+        awk -v s="$sample" -v b="$bin_name" \
+            '{print s"_cb_"b"\t"s"_"$1"\tcomebin"}' \
+        >> "$MAP_FILE"
+        ((COMEBIN_COUNT++))
+    done
+done
+echo "     COMEBin bins: $COMEBIN_COUNT"
+
+TOTAL_BINS=$((METABAT_COUNT + SEMIBIN_COUNT + COMEBIN_COUNT))
+echo "  Total bins in mapping: $TOTAL_BINS"
+echo "  Total lines in MAP_FILE: $(wc -l < "$MAP_FILE")"
 
 # =========================
-# STEP 5 — MAGSCOT (quality scoring)
+# STEP 6 — MAGSCOT
 # =========================
-echo "Running MAGScoT..."
+echo "Step 6: Running MAGScoT..."
 
 Rscript "$MAGSCOT_SCRIPT" \
-    -i "$WORKDIR/bin_mapping.tsv" \
+    -i "$MAP_FILE" \
     --hmm "$WORKDIR/magscot_hmm.tsv" \
     -p bac120 \
     -o "$WORKDIR/MAGScoT_Final_Atopica" \
     -t 0.5 \
-    --max_cont 0.15 
-# -i: input file with bin-contig mapping and source (MetaBAT2 or SemiBin2)
-# --hmm: output from hmmsearch with GTDB markers
-# -p: marker set to use (bac120 for bacteria)
-# -o: output prefix for MAGScoT results
-# -t 0.2: minimum completeness threshold (default 0.5)
-# --max_cont 0.6: maximum contamination threshold (default 0.1)
-# The mannual tools: https://github.com/ikmb/MAGScoT
+    --max_cont 0.15
+
 echo "Done."
+echo "Output: $WORKDIR/MAGScoT_Final_Atopica.*"
