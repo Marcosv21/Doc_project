@@ -1,9 +1,5 @@
 # Investigation of the cross-feeding mechanism of sialic acids between *Staphylococcus aureus* and commensal bacteria in the context of atopic dermatitis.
 
-
-![Bioinformatic Pipeline Step](./images/image.png)
-*(Figure: Workflow of the bioinformatic analysis)*
-
 ---
 
 ## FLASH Tools Configuration
@@ -49,11 +45,9 @@ graph TD
         Clean4 --> Clean5[megahit.sh]:::shell
     end
 
-    %% Fork
-    Clean5 --> Func1
+    %% --- 2. TAXONOMY & BIN REFINEMENT ---
     Clean5 --> Tax1
 
-    %% --- 2. TAXONOMY & BIN REFINEMENT ---
     subgraph Taxonomy ["2. Taxonomy & Bin Refinement"]
         direction TB
         Tax1[indexing_contigs.sh]:::shell --> Tax2[align_contigs_read.sh]:::shell
@@ -62,6 +56,7 @@ graph TD
         %% Multi-Binning
         Tax3 --> Bin1[metabat2.sh]:::shell
         Tax3 --> Bin2[semibin2.sh]:::shell
+        Tax3 --> Bin3[comebin.sh]:::shell        
         
         %% Refinement
         Bin1 --> Refine[MAGScoT.R]:::refinement
@@ -72,25 +67,12 @@ graph TD
         Tax7 --> Tax8[mag_functional_screening.sh]:::shell
         Tax8 --> Tax9[create_master_table.py]:::python
     end
-
-    %% --- 3. FUNCTIONAL ANALYSIS ---
-    subgraph Functional ["3. Functional Analysis"]
+    
+    %% --- 3. STATISTICAL ANALYSIS ---
+    subgraph Stats ["3. Statistical Analysis"]
         direction TB
-        Func1[prodigal_script.sh]:::shell --> Func2[script_diamond.sh]:::shell
-        Func2 --> Func3[filtering_diamond.sh]:::shell
-        Func3 --> Func4[extract_filtered_fna.py]:::python
-        Func4 --> Func5[indexing_fna.sh]:::shell
-        Func5 --> Func6[allign_fna_bowtie2.sh]:::shell
-        Func6 --> Func7[Joinning_idxst.py]:::python
+        Tax9 --> Stat1(plots_taxonomy.ipynb):::ipynb
     end
-
-    %% --- 4. STATISTICAL ANALYSIS ---
-    subgraph Stats ["4. Statistical Analysis"]
-        direction TB
-        Func7 --> Stat1(plots.ipynb):::ipynb
-        Tax9 --> Stat2(plots_taxonomy.ipynb):::ipynb
-    end
-
 ```
 
 ### 1. Preparation
@@ -110,7 +92,7 @@ The pipeline quality-controls and decontaminates reads before assembly.:
 ### 3. Taxonomy Analysis
 
 1. **Mapping:** `indexing_contigs.sh` (Index Building), `align_contigs_read.sh` (Alignment), `ordering_bam.sh` (BAM Sorting)
-2. **Binning:** `metabat2.sh` (MetaBAT2 Binning), `semibin2.sh` (SemiBin2 Binning)
+2. **Binning:** `metabat2.sh` (MetaBAT2 Binning), `semibin2.sh` (SemiBin2 Binning), `comebin.sh` (Comebin Binning)
 3. **Refinement:** `MAGScoT.R` (Bin Refinement)
 4. **Quality Assessment:** `checkm2.sh` (CheckM2)
 5. **Taxonomic Classification:** `gtdb-tk.sh` (GTDB-Tk) 
