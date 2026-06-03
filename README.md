@@ -76,11 +76,11 @@ graph TD
     end
 ```
 
-### 1. Preparation
+### 0. Preparation
 
 *(Initial data setup and database downloads)*
 
-### 2. Cleaning and Assembly
+### 1. Cleaning and Assembly
 
 The pipeline quality-controls and decontaminates reads before assembly.:
 
@@ -90,7 +90,7 @@ The pipeline quality-controls and decontaminates reads before assembly.:
 4. `flash.sh` (Merge Paired-end Reads)
 5. `megahit.sh` (Assembly)
 
-### 3. Taxonomy Analysis
+### 2. Taxonomy Analysis
 
 1. **Mapping:** `indexing_contigs.sh` (Index Building), `align_contigs_read.sh` (Alignment), `ordering_bam.sh` (BAM Sorting)
 2. **Binning:** `metabat2.sh` (MetaBAT2 Binning), `semibin2.sh` (SemiBin2 Binning), `comebin.sh` (Comebin Binning)
@@ -107,18 +107,7 @@ The pipeline quality-controls and decontaminates reads before assembly.:
 7. `mag_functional_screening.sh` (Targeted Functional Search)
 8. `create_master_table.py` (Data Aggregation)
 
-### 4. Functional Analysis
-
-1. `prodigal_script.sh` (Gene Prediction)
-2. `script_diamond.sh` (Protein Alignment)
-3. `filtering_diamond.sh` (Quality Filtering)
-4. `extract_filtered_fna.py` (Sequence Extraction)
-5. `indexing_fna.sh` (Index Building)
-6. `allign_fna_bowtie2.sh` (Alignment)
-7. `indexing_idxstats.py`
-8. `Joinning_idxst.py` (Statistical Merging)
-
-### 5. Statistical Analysis: 
+### 3. Statistical Analysis: 
 - `plots_doc_simple`
 
 
